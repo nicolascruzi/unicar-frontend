@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  background-color: #0a0a2a; /* Color de fondo por defecto */
+  font-family: 'Roboto', sans-serif; /* Tipo de letra por defecto */
+  color: #fff; /* Color de texto por defecto */
+}
+

@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Navbar from './components/NavBar/Navbar';
+import LandingPage from './components/LandingPage/LandingPage';
+import SignUpForm from './components/SignUp/SignUpForm';
+import LoginForm from './components/Login/LoginForm';
+import TripsPage from './components/Trips/TripsPage';
+import Requests from './components/Requests/Requests';
+import MyTrips from './components/Trips/MyTrips';
+import Profile from './components/Profile/Profile';
+import SearchTrips from './components/Trips/SearchTrips';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <Router>
+        <AuthContent />
+      </Router>
+    </AuthProvider>
+  );
+}
+
+function AuthContent() {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <>
+      {isAuthenticated && <Navbar />}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/trips" element={<TripsPage />} />
+        <Route path="/requests" element={<Requests />} />
+        <Route path="/history" element={<MyTrips />} />
+        <Route path="/profile" element={<Profile />} />
+        
+      </Routes>
+    </>
   );
 }
 
