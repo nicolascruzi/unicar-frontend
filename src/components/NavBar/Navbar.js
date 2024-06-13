@@ -35,6 +35,9 @@ const Navbar = () => {
           <StyledButton color="inherit" component={Link} to="/history" active={location.pathname === '/history'}>
             Historial
           </StyledButton>
+          <StyledButton color="inherit" component={Link} to="/reviews" active={location.pathname === '/reviews'}>
+            Reseñas
+          </StyledButton>
           <StyledButton
             color="inherit"
             component={Link}
