@@ -10,6 +10,7 @@ import Requests from './components/Requests/Requests';
 import MyTrips from './components/Trips/MyTrips';
 import Profile from './components/Profile/Profile';
 import SearchTrips from './components/Trips/SearchTrips';
+import Reviews from './components/Reviews/Reviews';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function AuthContent() {
         <Route path="/requests" element={<Requests />} />
         <Route path="/history" element={<MyTrips />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/reviews" element={<Reviews/>} />
         
       </Routes>
     </>
