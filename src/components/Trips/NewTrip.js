@@ -1,50 +1,86 @@
-// NewTrip.js
-import React, { useState } from 'react';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Grid, Typography, IconButton, Divider } from '@mui/material';
-import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
-import EventSeatIcon from '@mui/icons-material/EventSeat';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import PublishIcon from '@mui/icons-material/Publish';
-import { Padding } from '@mui/icons-material';
-
-const initialSeats = {
-  piloto: true,
-  copiloto: false,
-  traseroIzquierda: false,
-  traseroCentro: false,
-  traseroDerecha: false,
-};
+import { useNavigate } from 'react-router-dom';
 
 const NewTrip = ({ open, handleClose, handleSubmit }) => {
+  const navigate = useNavigate();
+
   const [formValues, setFormValues] = useState({
-    auto: '',
-    inicio: '',
-    destino: '',
-    partida: '',
-    llegada: ''
+    car: '',
+    start_location: '',
+    end_location: '',
+    start_date: '',
+    end_date: '',
+    capacity: 0,
+    price: 0,
+    passengers: [] // Add passengers here
   });
 
-  const [seats, setSeats] = useState(initialSeats);
-  const [seatCount, setSeatCount] = useState(0);
+  const [cars, setCars] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchCars();
+  }, []);
+
+  const fetchCars = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/cars/get_cars/`);
+      setCars(response.data);
+    } catch (error) {
+      console.error('Error fetching cars:', error);
+    }
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const toggleSeat = (seat) => {
-    setSeats((prevSeats) => {
-      const updatedSeats = { ...prevSeats, [seat]: !prevSeats[seat] };
-      const count = Object.values(updatedSeats).filter(selected => selected).length - 1; // -1 para excluir el piloto
-      setSeatCount(count);
-      return updatedSeats;
-    });
+  const handleClickCars = () => {
+    navigate('/cars');
   };
 
-  const submitForm = () => {
-    const allFieldsFilled = Object.values(formValues).every((value) => value !== '');
+  const handleAutoChange = (event) => {
+    setFormValues({ ...formValues, car: event.target.value });
+  };
+
+  const formatDateTime = (dateTime) => {
+    return new Date(dateTime).toISOString();
+  };
+
+  const submitForm = async () => {
+    if (!formValues.car) {
+      setError('Debe seleccionar un auto para crear el viaje.');
+      return;
+    }
+
+    const allFieldsFilled = Object.values(formValues).every((value) => value !== '' && value !== null);
     if (allFieldsFilled) {
-      handleSubmit({ ...formValues, seats });
-      handleClose();
+      try {
+        const tripData = {
+          driver: 1, // Cambiar cuando haya manejo de usuarios
+          car: formValues.car,
+          start_location: formValues.start_location,
+          end_location: formValues.end_location,
+          start_date: formatDateTime(formValues.start_date),
+          end_date: formatDateTime(formValues.end_date),
+          capacity: formValues.capacity,
+          price: formValues.price,
+          in_progress: false,
+          passengers: formValues.passengers // Add the passengers field
+        };
+
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/trips/create/`, tripData);
+        console.log('Success:', response.data);
+        handleClose();
+        handleSubmit(formValues); // Update parent state if needed
+      } catch (error) {
+        console.error('Error submitting trip:', error.response ? error.response.data : error.message);
+        setError(error.response ? error.response.data.detail || 'Error al publicar el viaje. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+      }
     } else {
       alert('Por favor, rellene todos los campos.');
     }
@@ -53,125 +89,128 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
   return (
     <Box>
       <Dialog open={open} onClose={handleClose}>
-      <DialogTitle sx={{ marginLeft: 5, marginTop: 5, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <PublishIcon sx={{ mr: 1 }} />
-    Publicar Viaje
-    </DialogTitle>
-    <Typography variant="body1" sx={{ textAlign: 'left', ml: 4 }}>
-    Complete los siguientes campos solicitados para publicar un nuevo viaje.
-    </Typography>
+        <DialogTitle sx={{ marginLeft: 5, marginTop: 5, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <PublishIcon sx={{ mr: 1 }} />
+          Publicar Viaje
+        </DialogTitle>
+        <Typography variant="body1" sx={{ textAlign: 'left', ml: 4, mr: 4 }}>
+          Complete los siguientes campos solicitados para publicar un nuevo viaje.
+        </Typography>
 
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="auto"
-            label="Auto a ofrecer"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formValues.auto}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="inicio"
-            label="Ubicación de partida"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formValues.inicio}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="destino"
-            label="Ubicación de llegada"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formValues.destino}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="partida"
-            label="Hora de partida"
-            type="datetime-local"
-            fullWidth
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={formValues.partida}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="llegada"
-            label="Hora de llegada estimada"
-            type="datetime-local"
-            fullWidth
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={formValues.llegada}
-            onChange={handleChange}
-          />
-          <Box sx={{ marginTop: 3 }}>
-            <Grid container spacing={1} justifyContent="center">
-              <Grid item>
-               
-                <IconButton onClick={() => toggleSeat('piloto')}>
-                  <EventSeatIcon
-                    style={{ color: seats.piloto ? '#3f51b5' : '#e0e0e0' }}
-                  />
-                </IconButton>
-              </Grid>
-              <Grid item>
-               
-                <IconButton onClick={() => toggleSeat('copiloto')}>
-                  <EventSeatIcon
-                    style={{ color: seats.copiloto ? '#3f51b5' : '#e0e0e0' }}
-                  />
-                </IconButton>
-              </Grid>
-            </Grid>
-            <Grid container spacing={1} justifyContent="center" sx={{ marginTop: 1 }}>
-              <Grid item>
-               
-                <IconButton onClick={() => toggleSeat('traseroIzquerda')}>
-                  <EventSeatIcon
-                    style={{ color: seats.traseroIzquerda ? '#3f51b5' : '#e0e0e0' }}
-                  />
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <IconButton onClick={() => toggleSeat('traseroCentro')}>
-                  <EventSeatIcon
-                    style={{ color: seats.traseroCentro ? '#3f51b5' : '#e0e0e0' }}
-                  />
-                </IconButton>
-              
-              </Grid>
-              <Grid item>
-            
-                <IconButton onClick={() => toggleSeat('traseroDerecha')}>
-                  <EventSeatIcon
-                    style={{ color: seats.traseroDerecha ? '#3f51b5' : '#e0e0e0' }}
-                  />
-                </IconButton>
-              </Grid>
-            </Grid>
-            <Box sx={{ marginTop: 2, textAlign: 'center' }}>
-              <Typography variant="h6">Asientos a ofrecer: {seatCount}</Typography>
+          {cars.length === 0 ? (
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+                No tiene autos disponibles.
+              </Typography>
+              <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleClickCars}>
+                Crear un auto
+              </Button>
             </Box>
-          </Box>
+          ) : (
+            <>
+              <FormControl fullWidth variant="outlined" margin="dense">
+                <InputLabel id="auto-select-label">Auto</InputLabel>
+                <Select
+                  labelId="auto-select-label"
+                  id="auto-select"
+                  name="car"
+                  value={formValues.car}
+                  onChange={handleAutoChange}
+                  label="Auto a ofrecer"
+                >
+                  {cars.map((car) => (
+                    <MenuItem key={car.id} value={car.id}>
+                      {car.brand} {car.model}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                margin="dense"
+                name="start_location"
+                label="Ubicación de partida"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={formValues.start_location}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="dense"
+                name="end_location"
+                label="Ubicación de llegada"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={formValues.end_location}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="dense"
+                name="start_date"
+                label="Hora de partida"
+                type="datetime-local"
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                value={formValues.start_date}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="dense"
+                name="end_date"
+                label="Hora de llegada estimada"
+                type="datetime-local"
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                value={formValues.end_date}
+                onChange={handleChange}
+              />
+
+              <TextField
+                margin="dense"
+                name="capacity"
+                label="Capacidad"
+                type="number"
+                fullWidth
+                variant="outlined"
+                InputProps={{ inputProps: { min: 1 } }}
+                value={formValues.capacity}
+                onChange={handleChange}
+              />
+
+              <TextField
+                margin="dense"
+                name="price"
+                label="Precio"
+                type="number"
+                fullWidth
+                variant="outlined"
+                InputProps={{ inputProps: { min: 0 } }}
+                value={formValues.price}
+                onChange={handleChange}
+              />
+
+              {error && (
+                <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+                  {error}
+                </Typography>
+              )}
+            </>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
             Cancelar
           </Button>
-          <Button onClick={submitForm} color="primary">
-            Publicar viaje
-          </Button>
+          {cars.length > 0 && (
+            <Button onClick={submitForm} color="primary">
+              Publicar viaje
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

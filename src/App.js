@@ -11,6 +11,7 @@ import MyTrips from './components/Trips/MyTrips';
 import Profile from './components/Profile/Profile';
 import SearchTrips from './components/Trips/SearchTrips';
 import Reviews from './components/Reviews/Reviews';
+import Cars from './components/Cars/Cars';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function AuthContent() {
         <Route path="/history" element={<MyTrips />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/reviews" element={<Reviews/>} />
+        <Route path="/cars" element={<Cars />} />
         
       </Routes>
     </>

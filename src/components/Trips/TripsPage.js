@@ -1,5 +1,4 @@
-// TripsPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Paper, Typography, Button, Divider, TextField, InputAdornment, IconButton, Avatar, Fab } from '@mui/material';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -11,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { deepPurple, deepOrange } from '@mui/material/colors';
 import backgroundImg from '../../assets/images/imagenMaps2.png';
 import NewTrip from './NewTrip';
+import axios from 'axios';
 
 dayjs.extend(duration);
 dayjs.extend(utc);
@@ -18,15 +18,14 @@ dayjs.extend(timezone);
 
 const calculateTimeToDeparture = (departureTime) => {
   const now = dayjs();
-  const departure = dayjs(departureTime, 'MM/DD/YYYY hh:mm:ss A');
-
+  const departure = dayjs(departureTime);
   const diff = departure.diff(now);
-  const duration = dayjs.duration(diff);
+  const tripDuration = dayjs.duration(diff);
 
-  if (duration.asMinutes() <= 60) {
-    return `${Math.floor(duration.asMinutes())} minutos`;
+  if (tripDuration.asMinutes() <= 60) {
+    return `${Math.floor(tripDuration.asMinutes())} minutos`;
   } else {
-    return `${Math.floor(duration.asHours())} horas`;
+    return `${Math.floor(tripDuration.asHours())} horas`;
   }
 };
 
@@ -38,6 +37,20 @@ const getRandomColor = (name) => {
 
 export default function TripsPage() {
   const [open, setOpen] = useState(false);
+  const [trips, setTrips] = useState([]);
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/trips/upcoming/');
+        setTrips(response.data);
+      } catch (error) {
+        console.error('Error fetching trips:', error);
+      }
+    };
+
+    fetchTrips();
+  }, []);
 
   const handleOpen = () => {
     setOpen(true);
@@ -96,7 +109,7 @@ export default function TripsPage() {
       {/* Lista de Viajes */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         {trips.map((trip, index) => {
-          const asientosDisponibles = trip.capacidadMaxima - trip.pasajeros.length;
+          const seatsAvailable = trip.capacity - trip.passengers.length;
           return (
             <Paper key={index} sx={{ p: 3, flex: '1 1 calc(50% - 16px)', boxShadow: 3, display: 'flex', minWidth: '300px', marginBottom: '16px' }}>
               <Box sx={{ width: '50%', pr: 2 }}>
@@ -104,46 +117,46 @@ export default function TripsPage() {
               </Box>
               <Box sx={{ width: '50%', padding: "10px" }}>
                 <Typography variant="h5" align="center" gutterBottom marginBottom={3}>
-                  Viaje de {trip.conductor}
+                  Viaje de {trip.driver.name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Auto:</strong> {trip.auto}
+                  <strong>Auto:</strong> {trip.car.brand} {trip.car.model}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Inicio:</strong> {trip.inicio}
+                  <strong>Inicio:</strong> {trip.start_location}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Destino:</strong> {trip.destino}
+                  <strong>Destino:</strong> {trip.end_location}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Hora de Partida:</strong> {trip.partida}
+                  <strong>Hora de Partida:</strong> {dayjs(trip.start_date).format('DD/MM/YYYY HH:mm')}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Hora de Llegada:</strong> {trip.llegada}
+                  <strong>Hora de Llegada:</strong> {dayjs(trip.end_date).format('DD/MM/YYYY HH:mm')}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Capacidad Máxima:</strong> {trip.capacidadMaxima}
+                  <strong>Capacidad Máxima:</strong> {trip.capacity}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Asientos Disponibles:</strong> {asientosDisponibles}
+                  <strong>Asientos Disponibles:</strong> {seatsAvailable}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                   <strong>Pasajeros:</strong> 
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, margin: 2, justifyContent: "center" }}>
-                  {trip.pasajeros.map((pasajero, idx) => (
+                  {trip.passengers.map((passenger, idx) => (
                     <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 2 }}>
-                      <Avatar sx={{ bgcolor: getRandomColor(pasajero.nombre), width: 80, height: 80, marginBottom: 1 }}>
-                        {pasajero.nombre.charAt(0).toUpperCase()}
+                      <Avatar sx={{ bgcolor: getRandomColor(passenger.name), width: 80, height: 80, marginBottom: 1 }}>
+                        {passenger.name.charAt(0).toUpperCase()}
                       </Avatar>
-                      <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{pasajero.nombre}</Typography>
-                      <Typography variant="body2" align="center">{pasajero.apellido}</Typography>
+                      <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
+                      <Typography variant="body2" align="center">{passenger.surname}</Typography>
                     </Box>
                   ))}
                 </Box>
                 <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', color: 'green' }} gutterBottom>
                   <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />
-                  Viaje sale en {calculateTimeToDeparture(trip.partida)}
+                  Viaje sale en {calculateTimeToDeparture(trip.start_date)}
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, margin: 3 }}>
                   <Button variant="contained" sx={{ backgroundColor: '#0a0a2a', '&:hover': { backgroundColor: '#00001e' } }}>
@@ -158,7 +171,6 @@ export default function TripsPage() {
 
       {/* Botón flotante */}
       <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 40, right: 40, backgroundColor: 'green', padding: 7 }} onClick={handleOpen}>
-      
         CREAR VIAJE
       </Fab>
 
@@ -167,75 +179,3 @@ export default function TripsPage() {
     </Box>
   );
 }
-
-const trips = [
-  {
-    conductor: "Juan Pérez",
-    pasajeros: [
-      { nombre: "Ana", apellido: "González" },
-      { nombre: "Luis", apellido: "Martínez" },
-      { nombre: "Carlos", apellido: "Sánchez" }
-    ],
-    auto: "Susuki Celerio",
-    inicio: "Calle 123, Ciudad A",
-    destino: "Avenida 456, Ciudad B",
-    partida: "06/12/2024 08:00:00 AM",
-    llegada: "06/11/2024 10:00:00 AM",
-    capacidadMaxima: 4
-  },
-  {
-    conductor: "María López",
-    pasajeros: [
-      { nombre: "Pedro", apellido: "Pérez" },
-      { nombre: "Claudia", apellido: "Fernández" }
-    ],
-    auto: "Toyota Corolla",
-    inicio: "Calle 789, Ciudad C",
-    destino: "Avenida 321, Ciudad D",
-    partida: "06/12/2024 09:00:00 AM",
-    llegada: "06/11/2024 11:30:00 AM",
-    capacidadMaxima: 3
-  },
-  {
-    conductor: "Carlos García",
-    pasajeros: [
-      { nombre: "Laura", apellido: "Gómez" },
-      { nombre: "Miguel", apellido: "Díaz" },
-      { nombre: "Sara", apellido: "López" },
-      { nombre: "José", apellido: "García" }
-    ],
-    auto: "Honda Civic",
-    inicio: "Calle 456, Ciudad E",
-    destino: "Avenida 654, Ciudad F",
-    partida: "06/12/2024 07:30:00 AM",
-    llegada: "06/11/2024 09:30:00 AM",
-    capacidadMaxima: 5
-  },
-  {
-    conductor: "Ana Martínez",
-    pasajeros: [
-      { nombre: "Alberto", apellido: "Hernández" },
-      { nombre: "Lucía", apellido: "Ramírez" }
-    ],
-    auto: "Ford Fiesta",
-    inicio: "Calle 147, Ciudad G",
-    destino: "Avenida 258, Ciudad H",
-    partida: "06/12/2024 06:00:00 AM",
-    llegada: "06/11/2024 08:00:00 AM",
-    capacidadMaxima: 3
-  },
-  {
-    conductor: "Luis Fernández",
-    pasajeros: [
-      { nombre: "Mariana", apellido: "López" },
-      { nombre: "Fernanda", apellido: "Pérez" },
-      { nombre: "Jorge", apellido: "Martínez" }
-    ],
-    auto: "Chevrolet Spark",
-    inicio: "Calle 369, Ciudad I",
-    destino: "Avenida 741, Ciudad J",
-    partida: "06/12/2024 05:30:00 AM",
-    llegada: "06/12/2024 07:45:00 AM",
-    capacidadMaxima: 4
-  }
-];
