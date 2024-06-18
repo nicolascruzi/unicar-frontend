@@ -12,6 +12,7 @@ import Profile from './components/Profile/Profile';
 import SearchTrips from './components/Trips/SearchTrips';
 import Reviews from './components/Reviews/Reviews';
 import Cars from './components/Cars/Cars';
+import MapComponent from './components/GoogleMaps/MapComponent';
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function AuthContent() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/reviews" element={<Reviews/>} />
         <Route path="/cars" element={<Cars />} />
+        <Route path="/tripmap" element={<MapComponent center={{ lat: -34.397, lng: 150.644 }} zoom={20} />} />
+        <Route path="/pointmap" element={<MapComponent center={{ lat: -34.397, lng: 150.644 }} zoom={20} />} />
         
       </Routes>
     </>
