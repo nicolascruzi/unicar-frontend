@@ -11,38 +11,48 @@ import MyTrips from './components/Trips/MyTrips';
 import Profile from './components/Profile/Profile';
 import SearchTrips from './components/Trips/SearchTrips';
 import Reviews from './components/Reviews/Reviews';
+
+import Cookies from 'js-cookie';
+import PrivateRoute from './utils/PrivateRoute';
+
 import Cars from './components/Cars/Cars';
 
+
 function App() {
+
+  const loginToApp = (loginData) => {
+    localStorage.setItem("user", JSON.stringify(loginData));
+  }
+
   return (
-    <AuthProvider>
-      <Router>
-        <AuthContent />
-      </Router>
-    </AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="signup" element={<SignUpForm />} />
+        <Route path="login" element={<LoginForm loginToApp={loginToApp} />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/*" element={<HomeLayout />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
-function AuthContent() {
-  const { isAuthenticated } = useAuth();
-
+function HomeLayout() {
   return (
     <>
-      {isAuthenticated && <Navbar />}
+      <Navbar />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/trips" element={<TripsPage />} />
-        <Route path="/requests" element={<Requests />} />
-        <Route path="/history" element={<MyTrips />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/reviews" element={<Reviews/>} />
+        <Route path="trips" element={<TripsPage />} />
+        <Route path="requests" element={<Requests />} />
+        <Route path="history" element={<MyTrips />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="reviews" element={<Reviews />} />
         <Route path="/cars" element={<Cars />} />
-        
       </Routes>
     </>
   );
 }
+
 
 export default App;
