@@ -73,7 +73,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           passengers: formValues.passengers // Add the passengers field
         };
 
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/trips/create/`, tripData);
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData);
         console.log('Success:', response.data);
         handleClose();
         handleSubmit(formValues); // Update parent state if needed
