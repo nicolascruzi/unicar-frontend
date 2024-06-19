@@ -1,5 +1,5 @@
 import React,  { useState } from 'react';
-import { Typography, TextField, Button, Paper, Box } from '@mui/material';
+import { Typography, TextField, Button, Paper, Box, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -64,8 +64,12 @@ export default function LoginForm( { loginToApp }) {
     );
   }
 
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
       <Paper elevation={3} sx={{ padding: '50px', borderRadius: '15px', maxWidth: '50vw' }}>
         <>
           <Typography variant="h5" gutterBottom>
@@ -78,7 +82,12 @@ export default function LoginForm( { loginToApp }) {
           </Button>
         </>
       </Paper>
+      <Grid item xs={12} sm={8} md={6} lg={19} style={{ display: 'flex', justifyContent: 'center', marginTop: '-200px' }}>
+            <Button variant="contained" onClick={handleGoBack}>
+              Volver
+            </Button>
+          </Grid>
       <AlertBox severity="error" messageAlert={messageAlert} setOpenAlert={setOpenErrorAlert} openAlert={openErrorAlert} hideDuration={6000} />
-    </Box>
+    </Grid>
   );
 }
