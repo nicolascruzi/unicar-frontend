@@ -46,7 +46,7 @@ export default function SignUpForm() {
 
   const handleSignUp = () => {
     if (checkFields() && checkPasswords() && checkEmail()) {
-      axios.post(process.env.REACT_APP_URL + 'register/', {
+      axios.post(process.env.REACT_APP_API_URL + 'register/', {
         "name": name,
         "email": email,
         "password": password,

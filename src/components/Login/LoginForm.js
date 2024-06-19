@@ -16,7 +16,7 @@ export default function LoginForm( { loginToApp }) {
 
 
   function logoutPreviousSession() {
-    axios.post(process.env.REACT_APP_URL + 'logout/', null,
+    axios.post(process.env.REACT_APP_API_URL + 'logout/', null,
       {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken')
@@ -41,7 +41,7 @@ export default function LoginForm( { loginToApp }) {
   }
 
   const loginNewUser = () => {
-    axios.post(process.env.REACT_APP_URL + 'login/',
+    axios.post(process.env.REACT_APP_API_URL + 'login/',
       {
         "email": email,
         "password": password
