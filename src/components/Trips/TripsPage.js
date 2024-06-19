@@ -11,6 +11,7 @@ import { deepPurple, deepOrange } from '@mui/material/colors';
 import backgroundImg from '../../assets/images/imagenMaps2.png';
 import NewTrip from './NewTrip';
 import axios from 'axios';
+import MapComponent from '../GoogleMaps/MapComponent';
 
 dayjs.extend(duration);
 dayjs.extend(utc);
@@ -113,7 +114,7 @@ export default function TripsPage() {
           return (
             <Paper key={index} sx={{ p: 3, flex: '1 1 calc(50% - 16px)', boxShadow: 3, display: 'flex', minWidth: '300px', marginBottom: '16px' }}>
               <Box sx={{ width: '50%', pr: 2 }}>
-                <img src={backgroundImg} alt="Mapa de Google" style={{ width: '100%', height: '100%' }} />
+                <MapComponent encodedPolyline={trip.polyline} />
               </Box>
               <Box sx={{ width: '50%', padding: "10px" }}>
                 <Typography variant="h5" align="center" gutterBottom marginBottom={3}>

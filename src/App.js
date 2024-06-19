@@ -16,7 +16,6 @@ import Cookies from 'js-cookie';
 import PrivateRoute from './utils/PrivateRoute';
 
 import Cars from './components/Cars/Cars';
-import MapComponent from './components/GoogleMaps/MapComponent';
 
 
 function App() {
@@ -50,8 +49,6 @@ function HomeLayout() {
         <Route path="profile" element={<Profile />} />
         <Route path="reviews" element={<Reviews />} />
         <Route path="/cars" element={<Cars />} />
-        <Route path="/tripmap" element={<MapComponent center={{ lat: -34.397, lng: 150.644 }} zoom={20} />} />
-        <Route path="/pointmap" element={<MapComponent center={{ lat: -34.397, lng: 150.644 }} zoom={20} />} />
       </Routes>
     </>
   );
