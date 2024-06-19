@@ -25,7 +25,7 @@ const Cars = () => {
 
   const fetchCars = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_URL}/cars/get_cars`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/cars/get_cars`);
       setCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);
@@ -59,7 +59,7 @@ const Cars = () => {
     if (brand && model && year && license_plate && capacity) {
       try {
         if (isEditing) {
-          const updatedCar = await axios.put(`${process.env.REACT_APP_URL}cars/edit_car/${cars[currentCarIndex].id}/`, newCar,
+          const updatedCar = await axios.put(`${process.env.REACT_APP_API_URL}cars/edit_car/${cars[currentCarIndex].id}/`, newCar,
             {
               headers: {
                 'X-CSRFToken': Cookies.get('csrftoken')
@@ -73,7 +73,7 @@ const Cars = () => {
           );
           setCars(updatedCars);
         } else {
-          const createdCar = await axios.post(`${process.env.REACT_APP_URL}cars/create_car/`, newCar,
+          const createdCar = await axios.post(`${process.env.REACT_APP_API_URL}cars/create_car/`, newCar,
             {
               headers: {
                 'X-CSRFToken': Cookies.get('csrftoken')
@@ -103,7 +103,7 @@ const Cars = () => {
   const handleDelete = async (index) => {
     const carId = cars[index].id;
     try {
-      await axios.delete(`${process.env.REACT_APP_URL}cars/delete_car/${carId}/`,
+      await axios.delete(`${process.env.REACT_APP_API_URL}cars/delete_car/${carId}/`,
         {
           headers: {
             'X-CSRFToken': Cookies.get('csrftoken')

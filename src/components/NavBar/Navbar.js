@@ -21,7 +21,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(process.env.REACT_APP_URL + 'logout/', null, {
+      const response = await axios.post(process.env.REACT_APP_API_URL + 'logout/', null, {
         withCredentials: true,
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken')
