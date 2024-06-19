@@ -26,7 +26,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
 
   const fetchCars = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/cars/get_cars/`);
+      const response = await axios.get(`${process.env.REACT_APP_URL}/cars/get_cars/`);
       setCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);

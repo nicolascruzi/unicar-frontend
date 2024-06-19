@@ -15,12 +15,6 @@ export default function LoginForm( { loginToApp }) {
   const [messageAlert, setMessageAlert] = useState("");
 
 
-  const handleLogin = () => {
-    navigate('/trips');
-  };
-
-
-
   function logoutPreviousSession() {
     axios.post(process.env.REACT_APP_URL + 'logout/', null,
       {

@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Typography, TextField, Button, Paper, Grid, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import AlertBox from '../AlertBox';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-
 
 export default function SignUpForm() {
   const navigate = useNavigate();
@@ -14,11 +12,10 @@ export default function SignUpForm() {
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
   const [university, setUniversity] = useState('');
+  const [gender, setGender] = useState('');
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState("");
   const [openSuccessAlert, setOpenSuccessrAlert] = useState(false);
-
-
 
   const checkPasswords = () => {
     if (password === verifyPassword) {
@@ -30,7 +27,7 @@ export default function SignUpForm() {
   }
 
   const checkFields = () => {
-    if (name && email && password && verifyPassword && university) {
+    if (name && email && password && verifyPassword && university && gender) {
       return true;
     }
     setMessageAlert("Por favor, complete todos los campos");
@@ -46,7 +43,6 @@ export default function SignUpForm() {
     setOpenErrorAlert(true);
     return false;
   }
-  // const { login } = useAuth();
 
   const handleSignUp = () => {
     if (checkFields() && checkPasswords() && checkEmail()) {
@@ -54,25 +50,28 @@ export default function SignUpForm() {
         "name": name,
         "email": email,
         "password": password,
-        "university": university
-      
+        "university": university,
+        "gender": gender
       }, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken')
         },
         withCredentials: true
-      }
-    ).then(res => {
-      console.log(res.data)
-      setOpenSuccessrAlert(true);
-      navigate('/login');
-    }).catch(err => {
-      console.log(err)
-      setMessageAlert("Hubo un error al crear el usuario");
-      setOpenErrorAlert(true);
-    });
+      }).then(res => {
+        console.log(res.data)
+        setOpenSuccessrAlert(true);
+        navigate('/login');
+      }).catch(err => {
+        console.log(err)
+        setMessageAlert("Hubo un error al crear el usuario");
+        setOpenErrorAlert(true);
+      });
+    }
   };
-}
+
+  const handleGoBack = () => {
+    navigate('/');
+  };
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
@@ -136,11 +135,31 @@ export default function SignUpForm() {
                 <MenuItem value="UANDES">Universidad de los Andes</MenuItem>
               </Select>
             </FormControl>
+            <FormControl variant="outlined" fullWidth style={{ marginBottom: '20px' }}>
+              <InputLabel id="gender-label">Género</InputLabel>
+              <Select
+                labelId="gender-label"
+                id="gender"
+                name="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                label="Género"
+              >
+                <MenuItem value="Hombre">Hombre</MenuItem>
+                <MenuItem value="Mujer">Mujer</MenuItem>
+                <MenuItem value="Otro">Otro</MenuItem>
+              </Select>
+            </FormControl>
             <Button variant="contained" color="primary" fullWidth onClick={handleSignUp}>
               Registrarse
             </Button>
           </>
         </Paper>
+        <Grid item xs={12} sm={8} md={6} lg={19} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <Button variant="contained" onClick={handleGoBack}>
+          Volver
+        </Button>
+      </Grid>
       </Grid>
       <AlertBox severity="error" messageAlert={messageAlert} setOpenAlert={setOpenErrorAlert} openAlert={openErrorAlert} hideDuration={6000} />
       <AlertBox severity="success" messageAlert="Usuario creado exitosamente" setOpenAlert={setOpenSuccessrAlert} openAlert={openSuccessAlert} hideDuration={3000} />
