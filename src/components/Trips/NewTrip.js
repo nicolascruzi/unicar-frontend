@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import PublishIcon from '@mui/icons-material/Publish';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const NewTrip = ({ open, handleClose, handleSubmit }) => {
   const navigate = useNavigate();
@@ -73,7 +74,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           passengers: formValues.passengers // Add the passengers field
         };
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData);
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData,
+          {
+            headers: {
+              'X-CSRFToken': Cookies.get('csrftoken')
+            },
+            withCredentials: true
+          }
+        );
         console.log('Success:', response.data);
         handleClose();
         handleSubmit(formValues); // Update parent state if needed
