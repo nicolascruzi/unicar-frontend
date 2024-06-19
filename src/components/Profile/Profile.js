@@ -14,7 +14,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(process.env.REACT_APP_URL + 'user_info/');
+        const response = await axios.get(process.env.REACT_APP_API_URL + 'user_info/');
         setUserData({
           name: response.data.name,
           email: response.data.email,
@@ -31,7 +31,7 @@ export default function ProfilePage() {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.patch(process.env.REACT_APP_URL + 'update_user/', userData, {
+      const response = await axios.patch(process.env.REACT_APP_API_URL + 'update_user/', userData, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken')
         },
