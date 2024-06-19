@@ -3,18 +3,20 @@ import axios from 'axios';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import PublishIcon from '@mui/icons-material/Publish';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const NewTrip = ({ open, handleClose, handleSubmit }) => {
   const navigate = useNavigate();
 
   const [formValues, setFormValues] = useState({
-    auto: '',
-    inicio: '',
-    destino: '',
-    partida: '',
-    llegada: '',
-    asientos: 0,
-    limiteAsientos: 4 // Default limit, can be updated based on selected car
+    car: '',
+    start_location: '',
+    end_location: '',
+    start_date: '',
+    end_date: '',
+    capacity: 0,
+    price: 0,
+    passengers: [] // Add passengers here
   });
 
   const [cars, setCars] = useState([]);
@@ -26,7 +28,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
 
   const fetchCars = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/cars/get_cars/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/cars/get_cars/`);
       setCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);
@@ -43,29 +45,53 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
   };
 
   const handleAutoChange = (event) => {
-    const selectedAuto = event.target.value;
-    const limiteAsientos = getAutoSeatLimit(selectedAuto); // Replace with logic to get seat limit
-    setFormValues({ ...formValues, auto: selectedAuto, limiteAsientos, asientos: 0 });
+    setFormValues({ ...formValues, car: event.target.value });
   };
 
-  const submitForm = () => {
-    if (!formValues.auto) {
+  const formatDateTime = (dateTime) => {
+    return new Date(dateTime).toISOString();
+  };
+
+  const submitForm = async () => {
+    if (!formValues.car) {
       setError('Debe seleccionar un auto para crear el viaje.');
       return;
     }
 
-    const allFieldsFilled = Object.values(formValues).every((value) => value !== '');
+    const allFieldsFilled = Object.values(formValues).every((value) => value !== '' && value !== null);
     if (allFieldsFilled) {
-      handleSubmit(formValues);
-      handleClose();
+      try {
+        const tripData = {
+          driver: 1, // Cambiar cuando haya manejo de usuarios
+          car: formValues.car,
+          start_location: formValues.start_location,
+          end_location: formValues.end_location,
+          start_date: formatDateTime(formValues.start_date),
+          end_date: formatDateTime(formValues.end_date),
+          capacity: formValues.capacity,
+          price: formValues.price,
+          in_progress: false,
+          passengers: formValues.passengers // Add the passengers field
+        };
+
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData,
+          {
+            headers: {
+              'X-CSRFToken': Cookies.get('csrftoken')
+            },
+            withCredentials: true
+          }
+        );
+        console.log('Success:', response.data);
+        handleClose();
+        handleSubmit(formValues); // Update parent state if needed
+      } catch (error) {
+        console.error('Error submitting trip:', error.response ? error.response.data : error.message);
+        setError(error.response ? error.response.data.detail || 'Error al publicar el viaje. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+      }
     } else {
       alert('Por favor, rellene todos los campos.');
     }
-  };
-
-  const getAutoSeatLimit = (auto) => {
-    const car = cars.find((car) => car.id === auto);
-    return car ? car.capacity : 4; // Default to 4 if not found
   };
 
   return (
@@ -75,7 +101,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           <PublishIcon sx={{ mr: 1 }} />
           Publicar Viaje
         </DialogTitle>
-        <Typography variant="body1" sx={{ textAlign: 'left', ml: 4, mr:4 }}>
+        <Typography variant="body1" sx={{ textAlign: 'left', ml: 4, mr: 4 }}>
           Complete los siguientes campos solicitados para publicar un nuevo viaje.
         </Typography>
 
@@ -96,8 +122,8 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                 <Select
                   labelId="auto-select-label"
                   id="auto-select"
-                  name="auto"
-                  value={formValues.auto}
+                  name="car"
+                  value={formValues.car}
                   onChange={handleAutoChange}
                   label="Auto a ofrecer"
                 >
@@ -111,56 +137,68 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
 
               <TextField
                 margin="dense"
-                name="inicio"
+                name="start_location"
                 label="Ubicación de partida"
                 type="text"
                 fullWidth
                 variant="outlined"
-                value={formValues.inicio}
+                value={formValues.start_location}
                 onChange={handleChange}
               />
               <TextField
                 margin="dense"
-                name="destino"
+                name="end_location"
                 label="Ubicación de llegada"
                 type="text"
                 fullWidth
                 variant="outlined"
-                value={formValues.destino}
+                value={formValues.end_location}
                 onChange={handleChange}
               />
               <TextField
                 margin="dense"
-                name="partida"
+                name="start_date"
                 label="Hora de partida"
                 type="datetime-local"
                 fullWidth
                 variant="outlined"
                 InputLabelProps={{ shrink: true }}
-                value={formValues.partida}
+                value={formValues.start_date}
                 onChange={handleChange}
               />
               <TextField
                 margin="dense"
-                name="llegada"
+                name="end_date"
                 label="Hora de llegada estimada"
                 type="datetime-local"
                 fullWidth
                 variant="outlined"
                 InputLabelProps={{ shrink: true }}
-                value={formValues.llegada}
+                value={formValues.end_date}
                 onChange={handleChange}
               />
 
               <TextField
                 margin="dense"
-                name="asientos"
-                label={`Asientos a ofrecer (0 - ${formValues.limiteAsientos - 1})`}
+                name="capacity"
+                label="Capacidad"
                 type="number"
                 fullWidth
                 variant="outlined"
-                InputProps={{ inputProps: { min: 0, max: formValues.limiteAsientos - 1 } }}
-                value={formValues.asientos}
+                InputProps={{ inputProps: { min: 1 } }}
+                value={formValues.capacity}
+                onChange={handleChange}
+              />
+
+              <TextField
+                margin="dense"
+                name="price"
+                label="Precio"
+                type="number"
+                fullWidth
+                variant="outlined"
+                InputProps={{ inputProps: { min: 0 } }}
+                value={formValues.price}
                 onChange={handleChange}
               />
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Cookies from 'js-cookie';
 
 const Cars = () => {
   const [cars, setCars] = useState([]);
@@ -24,7 +25,7 @@ const Cars = () => {
 
   const fetchCars = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/cars/get_cars`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/cars/get_cars`);
       setCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);
@@ -58,13 +59,29 @@ const Cars = () => {
     if (brand && model && year && license_plate && capacity) {
       try {
         if (isEditing) {
-          const updatedCar = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/cars/edit_car/${cars[currentCarIndex].id}/`, newCar);
+          const updatedCar = await axios.put(`${process.env.REACT_APP_API_URL}cars/edit_car/${cars[currentCarIndex].id}/`, newCar,
+            {
+              headers: {
+                'X-CSRFToken': Cookies.get('csrftoken')
+              },
+              withCredentials: true
+            }
+          );
+
           const updatedCars = cars.map((car, index) => 
             index === currentCarIndex ? updatedCar.data : car
           );
           setCars(updatedCars);
         } else {
-          const createdCar = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/cars/create_car/`, newCar);
+          const createdCar = await axios.post(`${process.env.REACT_APP_API_URL}cars/create_car/`, newCar,
+            {
+              headers: {
+                'X-CSRFToken': Cookies.get('csrftoken')
+              },
+              withCredentials: true
+            }
+          );
+
           setCars([...cars, createdCar.data]);
         }
         handleClose();
@@ -86,7 +103,14 @@ const Cars = () => {
   const handleDelete = async (index) => {
     const carId = cars[index].id;
     try {
-      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/cars/delete_car/${carId}/`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}cars/delete_car/${carId}/`,
+        {
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken')
+          },
+          withCredentials: true
+        }
+      );
       const updatedCars = cars.filter((_, i) => i !== index);
       setCars(updatedCars);
     } catch (error) {
