@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -20,66 +20,89 @@ import SendIcon from '@mui/icons-material/Send';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import RequestDetailsDialog from './RequestDetailsDialog'; // Asegúrate de importar el Dialog
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Datos de ejemplo
-const incomingRequests = [
-  {
-    id: 1,
-    nombre: 'Ana Pérez',
-    ubicacionRecogida: 'Calle 123, Ciudad A',
-    calificacion: 4.5,
-    genero: 'Femenino',
-    universidad: 'Universidad X',
-  },
-  {
-    id: 2,
-    nombre: 'Juan García',
-    ubicacionRecogida: 'Avenida 456, Ciudad B',
-    calificacion: 4.0,
-    genero: 'Masculino',
-    universidad: 'Universidad Y',
-  },
-  {
-    id: 3,
-    nombre: 'María López',
-    ubicacionRecogida: 'Calle 789, Ciudad C',
-    calificacion: 4.8,
-    genero: 'Femenino',
-    universidad: 'Universidad Z',
-  },
-];
+// const incomingRequests = [
+//   {
+//     id: 1,
+//     nombre: 'Ana Pérez',
+//     ubicacionRecogida: 'Calle 123, Ciudad A',
+//     calificacion: 4.5,
+//     genero: 'Femenino',
+//     universidad: 'Universidad X',
+//   },
+//   {
+//     id: 2,
+//     nombre: 'Juan García',
+//     ubicacionRecogida: 'Avenida 456, Ciudad B',
+//     calificacion: 4.0,
+//     genero: 'Masculino',
+//     universidad: 'Universidad Y',
+//   },
+//   {
+//     id: 3,
+//     nombre: 'María López',
+//     ubicacionRecogida: 'Calle 789, Ciudad C',
+//     calificacion: 4.8,
+//     genero: 'Femenino',
+//     universidad: 'Universidad Z',
+//   },
+// ];
 
-const outgoingRequests = [
-  {
-    id: 1,
-    destinatario: 'Carlos Rodríguez',
-    auto: 'Toyota Corolla',
-    lugarSalida: 'Avenida 321, Ciudad D',
-    horaSalida: '09:00 AM',
-    estado: 'Pendiente',
-  },
-  {
-    id: 2,
-    destinatario: 'Lucía Martínez',
-    auto: 'Honda Civic',
-    lugarSalida: 'Avenida 654, Ciudad F',
-    horaSalida: '07:30 AM',
-    estado: 'Aprobada',
-  },
-  {
-    id: 3,
-    destinatario: 'Pedro Sánchez',
-    auto: 'Ford Fiesta',
-    lugarSalida: 'Avenida 258, Ciudad H',
-    horaSalida: '06:00 AM',
-    estado: 'Rechazada',
-  },
-];
+// const outgoingRequests = [
+//   {
+//     id: 1,
+//     destinatario: 'Carlos Rodríguez',
+//     auto: 'Toyota Corolla',
+//     lugarSalida: 'Avenida 321, Ciudad D',
+//     horaSalida: '09:00 AM',
+//     estado: 'Pendiente',
+//   },
+//   {
+//     id: 2,
+//     destinatario: 'Lucía Martínez',
+//     auto: 'Honda Civic',
+//     lugarSalida: 'Avenida 654, Ciudad F',
+//     horaSalida: '07:30 AM',
+//     estado: 'Aprobada',
+//   },
+//   {
+//     id: 3,
+//     destinatario: 'Pedro Sánchez',
+//     auto: 'Ford Fiesta',
+//     lugarSalida: 'Avenida 258, Ciudad H',
+//     horaSalida: '06:00 AM',
+//     estado: 'Rechazada',
+//   },
+// ];
 
 const Requests = () => {
   const [tabValue, setTabValue] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
+  const [incomingAsks, setIncomingAsks] = useState([]);
+  const [outgoingAsks, setOutgoingAsks] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`);
+        console.log(response.data);
+        setIncomingAsks(response.data);
+
+        const response_two = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks_outgoing/`);
+        setOutgoingAsks(response_two.data);
+
+      } catch(error) {
+        console.error('Error fetching trips:', error);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -90,14 +113,20 @@ const Requests = () => {
     setRequestDialogOpen(true);
   };
 
-  const handleCloseRequestDetails = () => {
+  const handleCloseRequestDetails = async () => {
     setSelectedRequest(null);
     setRequestDialogOpen(false);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`);
+    console.log(response.data);
+    setIncomingAsks(response.data);
+    setOutgoingAsks(response.data.filter(request => request.status !== 'Pendiente'));
   };
 
-  const handleApproveRequest = (request) => {
+  const handleApproveRequest = async (request) => {
     // Lógica para aprobar la solicitud
+
     console.log('Solicitud aprobada:', request);
+
     handleCloseRequestDetails();
   };
 
@@ -144,7 +173,7 @@ const Requests = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {incomingRequests.map((request) => (
+                {incomingAsks.map((request) => (
                   <TableRow key={request.id}>
                     <TableCell>{request.nombre}</TableCell>
                     <TableCell>{request.ubicacionRecogida}</TableCell>
@@ -152,11 +181,20 @@ const Requests = () => {
                     <TableCell>{request.genero}</TableCell>
                     <TableCell>{request.universidad}</TableCell>
                     <TableCell>
+                      { request.status === 'Pendiente' && 
                       <IconButton onClick={() => handleOpenRequestDetails(request)} size="small">
                         <Button variant="outlined" color="primary"  size="small">
                           Resolver
                         </Button>
                       </IconButton>
+                      } {
+                        request.status == 'approved' &&
+                        <TableCell>Aprobada</TableCell>
+                      } {
+                        request.status == 'denied' &&
+                        <TableCell>Rechazada</TableCell>
+                      }
+                      
                     </TableCell>
                   </TableRow>
                 ))}
@@ -177,7 +215,7 @@ const Requests = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {outgoingRequests.map((request) => (
+                {outgoingAsks.map((request) => (
                   <TableRow key={request.id}>
                     <TableCell>{request.destinatario}</TableCell>
                     <TableCell>{request.auto}</TableCell>

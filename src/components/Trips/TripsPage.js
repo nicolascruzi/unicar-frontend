@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { deepPurple, deepOrange } from '@mui/material/colors';
 import backgroundImg from '../../assets/images/imagenMaps2.png';
 import NewTrip from './NewTrip';
+import NewRequest from '../Requests/NewRequest';
 import axios from 'axios';
 import MapComponent from '../GoogleMaps/MapComponent';
 
@@ -39,6 +40,7 @@ const getRandomColor = (name) => {
 export default function TripsPage() {
   const [open, setOpen] = useState(false);
   const [trips, setTrips] = useState([]);
+  const [askToJoin, setAskToJoin] = useState(false);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -61,8 +63,32 @@ export default function TripsPage() {
     setOpen(false);
   };
 
+  const handleAskToJoin = (tripId) => {
+    setAskToJoin(true);
+    handleJoinRequest();
+  };
+
+  const handleCloseAskToJoin = () => {
+    setAskToJoin(false);
+  };
+
   const handleSubmit = (formValues) => {
     console.log('Viaje publicado:', formValues);
+  };
+
+  const handleSubmitAsk = (formValues) => {
+    console.log(' Solicitud enviada:', formValues);
+  }
+
+  const handleJoinRequest = async () => {
+    try {
+      console.log(askToJoin);
+      // const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/${tripId}/join/`);
+      // console.log('Solicitud enviada:', response.data);
+      // Aquí puedes agregar código para actualizar la interfaz de usuario, si es necesario.
+    } catch (error) {
+      console.error('Error al solicitar unirse al viaje:', error);
+    }
   };
 
   return (
@@ -160,9 +186,14 @@ export default function TripsPage() {
                   Viaje sale en {calculateTimeToDeparture(trip.start_date)}
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, margin: 3 }}>
-                  <Button variant="contained" sx={{ backgroundColor: '#0a0a2a', '&:hover': { backgroundColor: '#00001e' } }}>
+                  <Button
+                    variant="contained"
+                    sx={{ backgroundColor: '#0a0a2a', '&:hover': { backgroundColor: '#00001e' } }}
+                    onClick={()=> handleAskToJoin(trip.id)}>
                     Solicitar unirme
                   </Button>
+                  {/* Aca se envia la solicitud para unirse */}
+                  <NewRequest trip_id={trip.id} open={askToJoin} handleClose={handleCloseAskToJoin} handleSubmit={handleSubmitAsk}></NewRequest>
                 </Box>
               </Box>
             </Paper>
@@ -177,6 +208,13 @@ export default function TripsPage() {
 
       {/* Diálogo de creación de viaje */}
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
+
+         
+    
+
+      
+
+
     </Box>
   );
 }
