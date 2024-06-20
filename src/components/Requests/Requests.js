@@ -210,7 +210,6 @@ const Requests = () => {
                   <TableCell>Destinatario</TableCell>
                   <TableCell>Auto</TableCell>
                   <TableCell>Lugar de Salida</TableCell>
-                  <TableCell>Hora de Salida</TableCell>
                   <TableCell>Estado</TableCell>
                 </TableRow>
               </TableHead>
@@ -220,8 +219,13 @@ const Requests = () => {
                     <TableCell>{request.destinatario}</TableCell>
                     <TableCell>{request.auto}</TableCell>
                     <TableCell>{request.lugarSalida}</TableCell>
-                    <TableCell>{request.horaSalida}</TableCell>
-                    <TableCell>{request.estado}</TableCell>
+                    {request.estado === 'approved' &&
+                      <TableCell>Aprobada</TableCell>
+                    } {request.estado === 'denied' &&
+                      <TableCell>Rechazada</TableCell>
+                    } {request.estado === 'Pendiente' &&
+                      <TableCell>Pendiente</TableCell>
+                    }
                   </TableRow>
                 ))}
               </TableBody>
