@@ -109,6 +109,7 @@ const NewRequest = ({ trip_id, open, handleClose, handleSubmit }) => {
           }
         );
         console.log('Success:', response.data);
+        window.location.reload();
         handleClose();
         handleSubmit(formValues); // Update parent state if needed
       } catch (error) {

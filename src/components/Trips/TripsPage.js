@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Button, Divider, TextField, InputAdornment, IconButton, Avatar, Fab } from '@mui/material';
+import { Box, Paper, Typography, Button, Divider, Fab } from '@mui/material';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import SearchIcon from '@mui/icons-material/Search';
 import SensorsIcon from '@mui/icons-material/Sensors';
-import AddIcon from '@mui/icons-material/Add';
 import { deepPurple, deepOrange } from '@mui/material/colors';
-import backgroundImg from '../../assets/images/imagenMaps2.png';
 import NewTrip from './NewTrip';
 import NewRequest from '../Requests/NewRequest';
 import axios from 'axios';
@@ -141,17 +138,6 @@ export default function TripsPage() {
                 <Typography variant="body1" gutterBottom>
                   <strong>Precio:</strong> {trip.price}
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 1, margin: 2, justifyContent: "center" }}>
-                  {trip.passengers.map((passenger, idx) => (
-                    <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 2 }}>
-                      <Avatar sx={{ bgcolor: getRandomColor(passenger.name), width: 80, height: 80, marginBottom: 1 }}>
-                        {passenger.name.charAt(0).toUpperCase()}
-                      </Avatar>
-                      <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
-                      <Typography variant="body2" align="center">{passenger.surname}</Typography>
-                    </Box>
-                  ))}
-                </Box>
                 <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', color: 'green' }} gutterBottom>
                   <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />
                   {startDate && (
@@ -188,13 +174,6 @@ export default function TripsPage() {
 
       {/* Diálogo de creación de viaje */}
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
-
-         
-    
-
-      
-
-
     </Box>
   );
 }
