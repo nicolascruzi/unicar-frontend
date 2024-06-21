@@ -8,8 +8,7 @@ La plataforma Unicar permite a los estudiantes organizar viajes compartidos desd
 - [Instalación](#instalación)
 - [Ejecución](#ejecución)
 - [Componentes](#componentes)
-  - [CarCard](#carcard)
-  - [CarForm](#carform)
+  - [MapComponent](#mapcomponent)
 - [Páginas y Rutas](#páginas-y-rutas)
   - [HomePage](#homepage)
   - [App.js](#appjs)
@@ -51,11 +50,8 @@ Esto iniciará el servidor de desarrollo y podrá ver la aplicación en http://l
 
 ## Componentes
 
-### CarCard
-Este componente muestra la información de un automóvil en una tarjeta, incluyendo detalles como marca, modelo, año y placa.
-
-### CarForm
-Este componente es un formulario para agregar o editar la información de un automóvil. Permite ingresar detalles como marca, modelo, año y placa, y luego enviar esta información para ser procesada.
+### MapComponent
+Este componente muestra la información del mapa, utilizando la api key de Google Maps, es llamada en todas las vistas en donde se requiere renderizar un mapa.
 
 ## Páginas y Rutas
 
