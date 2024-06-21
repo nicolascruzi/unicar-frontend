@@ -9,8 +9,16 @@ La plataforma Unicar permite a los estudiantes organizar viajes compartidos desd
 - [Ejecución](#ejecución)
 - [Componentes](#componentes)
   - [MapComponent](#mapcomponent)
+  - [Navbar](#navbar)
+  - [LoginForm](#loginform)
+  - [SignUpForm](#signupform)
 - [Páginas y Rutas](#páginas-y-rutas)
-  - [HomePage](#homepage)
+  - [LandingPage](#landingpage)
+  - [LandingPage](#landingpage)
+  - [LandingPage](#landingpage)
+  - [LandingPage](#landingpage)
+  - [LandingPage](#landingpage)
+  - [LandingPage](#landingpage)
   - [App.js](#appjs)
 - [Utilidades](#utilidades)
 - [Despliegue](#despliegue)
@@ -53,12 +61,21 @@ Esto iniciará el servidor de desarrollo y podrá ver la aplicación en http://l
 ### MapComponent
 Este componente muestra la información del mapa, utilizando la api key de Google Maps, es llamada en todas las vistas en donde se requiere renderizar un mapa.
 
+### Navbar
+Este componente se muestra en la parte superior y contiene los botones para navegar en la plataforma.
+
+### LoginForm
+Este componente renderiza el formulario para iniciar sesion.
+
+### SignUpForm
+Este componente renderiza el formulario para registrarse como usuario de la plataforma.
+
 ## Páginas y Rutas
 
-HomePage
-La página principal muestra una lista de automóviles. Incluye un formulario para agregar nuevos automóviles y una lista de tarjetas que muestran la información de cada automóvil registrado.
+### LandingPage
+La página principal muestra informacion relevante sobre el objetivo de la plataforma y cuenta con botones para llegar al registro y login.
 
-App.js
+### App.js
 El archivo principal de la aplicación que define las rutas y estructura de navegación. Utiliza react-router-dom para gestionar las rutas y cargar diferentes páginas según la URL.
 
 ## Utilidades
