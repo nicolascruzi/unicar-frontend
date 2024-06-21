@@ -23,9 +23,10 @@ La estructura del proyecto es la siguiente:
 
 ```plaintext
 src/
-  components/    # Componentes de UI reutilizables
-  pages/         # Páginas de la aplicación
-  styles/        # Archivos de estilo globales
+  assets/
+    images/
+  components/    # Componentes de UI reutilizables y vistas
+  contexts/      # Contiene el AuthContext
   utils/         # Utilidades y funciones auxiliares
   App.js         # Componente principal de la aplicación
   index.js       # Punto de entrada de la aplicación
