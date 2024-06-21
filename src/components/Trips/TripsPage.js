@@ -45,7 +45,9 @@ export default function TripsPage() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/upcoming/`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/upcoming/`, {
+          withCredentials: true,
+        });
         setTrips(response.data);
       } catch (error) {
         console.error('Error fetching trips:', error);
