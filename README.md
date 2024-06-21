@@ -13,9 +13,12 @@ La plataforma Unicar permite a los estudiantes organizar viajes compartidos desd
   - [LoginForm](#loginform)
   - [SignUpForm](#signupform)
 - [Páginas y Rutas](#páginas-y-rutas)
+  - [LandingPage](#LandingPage)
+  - [App.js](#appjs)
 - [Utilidades](#utilidades)
+  - [PrivateRoute](#privateroute)
+  - [Theme](#privateroute)
 - [Despliegue](#despliegue)
-- [Recursos Adicionales](#recursos-adicionales)
 
 ## Estructura del Proyecto
 
@@ -73,9 +76,12 @@ El archivo principal de la aplicación que define las rutas y estructura de nave
 
 ## Utilidades
 
-Las utilidades son funciones auxiliares que pueden ser reutilizadas en varios lugares de la aplicación. Por ejemplo, funciones para hacer llamadas a una API, formatear datos, etc.
+### PrivateRoute
+Se utilizo esta herramienta para privatizar la ruta, exigiendo tener session id requerido para acceder a rutas especificas.
 
+### Theme
+Se utilizo este archivo para estansarizar estilos de la app.
 
 ## Despliegue
 
-El despliegue de la aplicación puede hacerse en servicios de hosting como Vercel, Netlify o Heroku. Estos servicios permiten subir la aplicación y hacerla accesible en Internet.
+El despliegue de la aplicación se realizo a traves del servicio vercel, el cual se encarga del hosting de la app y de realizar CD al actualizar la rama main
