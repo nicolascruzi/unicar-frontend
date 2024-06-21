@@ -31,7 +31,7 @@ src/
   index.js       # Punto de entrada de la aplicación
 
 
-## Instalación
+# Instalación
 
 Para instalar todas las dependencias necesarias, ejecute el siguiente comando:
 
