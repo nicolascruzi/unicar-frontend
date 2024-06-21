@@ -80,4 +80,4 @@ Se utilizo este archivo para estansarizar estilos de la app.
 
 ## Despliegue
 
-El despliegue de la aplicación se realizo a traves del servicio vercel, el cual se encarga del hosting de la app y de realizar CD al actualizar la rama main
+El despliegue de la aplicación se realizo a traves del servicio Vercel, el cual se encarga del hosting de la app y de realizar CD al actualizar la rama main.
