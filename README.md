@@ -13,7 +13,6 @@ La plataforma Unicar permite a los estudiantes organizar viajes compartidos desd
   - [LoginForm](#loginform)
   - [SignUpForm](#signupform)
 - [Páginas y Rutas](#páginas-y-rutas)
-  - [LandingPage](#LandingPage)
   - [App.js](#appjs)
 - [Utilidades](#utilidades)
   - [PrivateRoute](#privateroute)
@@ -67,9 +66,6 @@ Este componente renderiza el formulario para iniciar sesion.
 Este componente renderiza el formulario para registrarse como usuario de la plataforma.
 
 ## Páginas y Rutas
-
-### LandingPage
-La página principal muestra informacion relevante sobre el objetivo de la plataforma y cuenta con botones para llegar al registro y login.
 
 ### App.js
 El archivo principal de la aplicación que define las rutas y estructura de navegación. Utiliza react-router-dom para gestionar las rutas y cargar diferentes páginas según la URL.
