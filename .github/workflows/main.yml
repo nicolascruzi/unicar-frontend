@@ -24,5 +24,8 @@ jobs:
     - name: Install TypeScript and parser
       run: npm install --save-dev typescript @typescript-eslint/parser
 
-    - name: Run linter
-      run: npm run lint
+    - name: Clear ESLint cache
+      run: npm cache clean --force
+
+    - name: Run linter with debug
+      run: npm run lint -- --debug
