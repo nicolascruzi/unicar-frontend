@@ -5,110 +5,102 @@ import PublishIcon from '@mui/icons-material/Publish';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-const NewTrip = ({ open, handleClose, handleSubmit }) => {
+const NewRequest = ({ trip_id, open, handleClose, handleSubmit }) => {
   const navigate = useNavigate();
 
   const [formValues, setFormValues] = useState({
-    car: '',
-    start_location: '',
-    end_location: '',
-    start_date: '',
-    end_date: '',
-    capacity: 0,
-    price: 0,
-    passengers: [] // Add passengers here
+    street: '',
+    trip: trip_id,
   });
 
-  const [cars, setCars] = useState([]);
+//   const [cars, setCars] = useState([]);
   const [error, setError] = useState('');
 
   //opciones ida o regreso
-  const [typeTrip, setTypeTrip] = useState('ida');
+//   const [typeTrip, setTypeTrip] = useState('ida');
 
-  const [university, setUniversity] = useState('PUC');
+//   const [university, setUniversity] = useState('PUC');
 
-  useEffect(() => {
-    fetchCars();
-  }, []);
+//   useEffect(() => {
 
-  const fetchCars = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}cars/get_cars/`, {
-        withCredentials: true,
-      });
-      setCars(response.data);
-    } catch (error) {
-      console.error('Error fetching cars:', error);
-    }
-  };
+//   }, []);
+
+//   const fetchCars = async () => {
+//     try {
+//       const response = await axios.get(`${process.env.REACT_APP_API_URL}cars/get_cars/`);
+//       setCars(response.data);
+//     } catch (error) {
+//       console.error('Error fetching cars:', error);
+//     }
+//   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleClickCars = () => {
-    navigate('/cars');
-  };
+//   const handleClickCars = () => {
+//     navigate('/cars');
+//   };
 
-  const handleAutoChange = (event) => {
-    setFormValues({ ...formValues, car: event.target.value });
-  };
+//   const handleAutoChange = (event) => {
+//     setFormValues({ ...formValues, car: event.target.value });
+//   };
 
-  const formatDateTime = (dateTime) => {
-    return new Date(dateTime).toISOString();
-  };
+//   const formatDateTime = (dateTime) => {
+//     return new Date(dateTime).toISOString();
+//   };
 
   const submitForm = async () => {
-    if (!formValues.car) {
-      setError('Debe seleccionar un auto para crear el viaje.');
-      return;
-    }
+    // if (!formValues.car) {
+    //   setError('Debe seleccionar un auto para crear el viaje.');
+    //   return;
+    // }
 
-    let allFieldsFilled;
-    if (typeTrip === 'ida') {
-      // only required fields for ida
-      allFieldsFilled = formValues.car && formValues.start_location && university && formValues.end_date && formValues.capacity && formValues.price;
-    } else if (typeTrip === 'vuelta') {
-      // only required fields for vuelta
-      allFieldsFilled = formValues.car && formValues.end_location && university && formValues.start_date && formValues.capacity && formValues.price;
-    } else {
-      allFieldsFilled = false;
-    }
+    let allFieldsFilled = formValues.street;
+    // if (typeTrip === 'ida') {
+    //   // only required fields for ida
+    //   allFieldsFilled = formValues.car && formValues.start_location && university && formValues.end_date && formValues.capacity && formValues.price;
+    // } else if (typeTrip === 'vuelta') {
+    //   // only required fields for vuelta
+    //   allFieldsFilled = formValues.car && formValues.end_location && university && formValues.start_date && formValues.capacity && formValues.price;
+    // } else {
+    //   allFieldsFilled = false;
+    // }
 
     if (allFieldsFilled) {
       try {
-        let start_location_final;
-        let end_location_final;
-        let start_date_final;
-        let end_date_final;
-        if (typeTrip === 'vuelta') {
-          start_location_final = university;
-          end_location_final = formValues.end_location; // Set the end location to the university if the trip is vuelta
-          start_date_final = formValues.start_date;
-          end_date_final = null;
-        } else {
-          start_location_final = formValues.start_location; // Set the start location to the university if the trip is ida
-          end_location_final = university;
-          start_date_final = null;
-          end_date_final = formValues.end_date;
-        }
+        // let start_location_final;
+        // let end_location_final;
+        // let start_date_final;
+        // let end_date_final;
+        // if (typeTrip === 'vuelta') {
+        //   start_location_final = university;
+        //   end_location_final = formValues.end_location; // Set the end location to the university if the trip is vuelta
+        //   start_date_final = formValues.start_date;
+        //   end_date_final = null;
+        // } else {
+        //   start_location_final = formValues.start_location; // Set the start location to the university if the trip is ida
+        //   end_location_final = university;
+        //   start_date_final = null;
+        //   end_date_final = formValues.end_date;
+        // }
 
-        const tripData = {
-          driver: 1, // Cambiar cuando haya manejo de usuarios
-          car: formValues.car,
-          start_location: start_location_final,
-          end_location: end_location_final,
-          start_date: start_date_final ? formatDateTime(formValues.start_date) : null,
-          end_date: end_date_final ? formatDateTime(formValues.end_date) : null,
-          capacity: formValues.capacity,
-          price: formValues.price,
-          in_progress: false,
-          passengers: formValues.passengers, // Add the passengers field
-          type_trip: typeTrip
-        };
+        // const tripData = {
+        //   driver: 1, // Cambiar cuando haya manejo de usuarios
+        //   car: formValues.car,
+        //   start_location: start_location_final,
+        //   end_location: end_location_final,
+        //   start_date: start_date_final ? formatDateTime(formValues.start_date) : null,
+        //   end_date: end_date_final ? formatDateTime(formValues.end_date) : null,
+        //   capacity: formValues.capacity,
+        //   price: formValues.price,
+        //   in_progress: false,
+        //   passengers: formValues.passengers, // Add the passengers field
+        //   type_trip: typeTrip
+        // };
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData,
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}asks/create_ask/`, formValues,
           {
             headers: {
               'X-CSRFToken': Cookies.get('csrftoken')
@@ -117,34 +109,35 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           }
         );
         console.log('Success:', response.data);
+        window.location.reload();
         handleClose();
         handleSubmit(formValues); // Update parent state if needed
       } catch (error) {
         console.error('Error submitting trip:', error.response ? error.response.data : error.message);
-        setError(error.response ? error.response.data.detail || 'Error al publicar el viaje. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+        setError(error.response ? error.response.data.detail || 'Error al enviar la solicitud. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
       }
     } else {
       alert('Por favor, rellene todos los campos.');
     }
   };
 
-  const toggleTripType = () => {
-    setTypeTrip(typeTrip === 'ida' ? 'vuelta' : 'ida'); // Toggle between ida and vuelta
-  };
+//   const toggleTripType = () => {
+//     setTypeTrip(typeTrip === 'ida' ? 'vuelta' : 'ida'); // Toggle between ida and vuelta
+//   };
 
   return (
     <Box>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle sx={{ marginLeft: 5, marginTop: 5, fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <PublishIcon sx={{ mr: 1 }} />
-          Publicar Viaje
+          Solicitar Viaje
         </DialogTitle>
         <Typography variant="body1" sx={{ textAlign: 'left', ml: 4, mr: 4 }}>
-          Complete los siguientes campos solicitados para publicar un nuevo viaje.
+          Complete los siguientes campos solicitados para publicar su solicitud.
         </Typography>
 
         {/* Button to select if the trip is for ida or vuelta, the button change type_trip useState */}
-        <FormControlLabel
+        {/* <FormControlLabel
           control={
             <Switch
               checked={typeTrip === 'vuelta'}
@@ -154,21 +147,11 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           }
           label={typeTrip === 'vuelta' ? 'Vuelta' : 'Ida'}
           sx={{ ml: 4, mt: 2 }}
-        />
+        /> */}
 
         <DialogContent>
-          {cars.length === 0 ? (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-                No tiene autos disponibles.
-              </Typography>
-              <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleClickCars}>
-                Crear un auto
-              </Button>
-            </Box>
-          ) : (
             <>
-              <FormControl fullWidth variant="outlined" margin="dense">
+              {/* <FormControl fullWidth variant="outlined" margin="dense">
                 <InputLabel id="auto-select-label">Auto</InputLabel>
                 <Select
                   labelId="auto-select-label"
@@ -184,22 +167,22 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl>
+              </FormControl> */}
 
               
-              { typeTrip === 'ida' ?
+              {/* { typeTrip === 'ida' ?
                 <div>
                   <TextField
                   margin="dense"
                   name="start_location"
-                  label="Ubicación de partida (incluir comuna)"
+                  label="Ubicación de partida"
                   type="text"
                   fullWidth
                   variant="outlined"
                   value={formValues.start_location}
                   onChange={handleChange}
                   />
-                  <FormControl variant="outlined" fullWidth style={{ marginTop: '10px' }}>
+                  <FormControl variant="outlined" fullWidth style={{ marginBottom: '20px' }}>
                   <InputLabel id="university-label">Universidad Destino</InputLabel>
                   <Select
                     labelId="university-label"
@@ -217,7 +200,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                 </div>
                 :
                 <div>
-                  <FormControl variant="outlined" fullWidth style={{ marginTop: '10px' }}>
+                  <FormControl variant="outlined" fullWidth style={{ marginBottom: '20px' }}>
                   <InputLabel id="university-label">Universidad Inicio</InputLabel>
                   <Select
                     labelId="university-label"
@@ -235,7 +218,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   <TextField
                     margin="dense"
                     name="end_location"
-                    label="Ubicación de llegada (incluir comuna)"
+                    label="Ubicación de llegada"
                     type="text"
                     fullWidth
                     variant="outlined"
@@ -243,8 +226,8 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     onChange={handleChange}
                   />
                 </div>
-              }
-              { typeTrip === 'ida' ?
+              } */}
+              {/* { typeTrip === 'ida' ?
               
                 <TextField
                   margin="dense"
@@ -269,53 +252,39 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   value={formValues.start_date}
                   onChange={handleChange}
                 />
-              }
+              } */}
 
               <TextField
                 margin="dense"
-                name="capacity"
-                label="Capacidad"
-                type="number"
+                name="street"
+                label="Dirección (incluir comuna)"
+                type="text"
                 fullWidth
                 variant="outlined"
-                InputProps={{ inputProps: { min: 1 } }}
-                value={formValues.capacity}
+                value={formValues.name}
                 onChange={handleChange}
               />
 
-              <TextField
-                margin="dense"
-                name="price"
-                label="Precio"
-                type="number"
-                fullWidth
-                variant="outlined"
-                InputProps={{ inputProps: { min: 0 } }}
-                value={formValues.price}
-                onChange={handleChange}
-              />
 
               {error && (
                 <Typography color="error" variant="body2" sx={{ mt: 2 }}>
                   {error}
                 </Typography>
-              )}
+                )}
             </>
-          )}
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="secondary">
             Cancelar
           </Button>
-          {cars.length > 0 && (
             <Button onClick={submitForm} color="primary">
-              Publicar viaje
+              Solicitar Viaje
             </Button>
-          )}
         </DialogActions>
       </Dialog>
     </Box>
   );
 };
 
-export default NewTrip;
+export default NewRequest;

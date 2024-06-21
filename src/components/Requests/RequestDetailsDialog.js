@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Paper,
   Dialog,
@@ -12,16 +12,58 @@ import {
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
-const RequestDetailsDialog = ({ request, open, onClose }) => {
-  const handleApproveRequest = () => {
+
+const RequestDetailsDialog = ({ request, open, onClose}) => {
+  const [error, setError] = useState('');
+
+  const handleApproveRequest = async () => {
     // Lógica para aprobar la solicitud
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}asks/update_ask/`, 
+      {
+        ask_id: request.id,
+        decision: 'approved',      
+      },{
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken')
+          },
+          withCredentials: true
+        }
+      );
+      console.log('Success:', response.data);
+
+    } catch(error) {
+      console.error('Error submiting decision:', error.response ? error.response.data : error.message);
+      setError(error.response ? error.response.data.detail || 'Error al enviar la solicitud. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+    }
+    
     console.log('Solicitud aprobada:', request);
     onClose();
   };
 
-  const handleRejectRequest = () => {
+  const handleRejectRequest = async () => {
     // Lógica para rechazar la solicitud
+    try {
+      console.log("Holaaaa");
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}asks/update_ask/`,
+        {
+          'decision': 'denied',
+           'ask_id': request.id},
+        {
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken')
+          },
+          withCredentials: true
+        }
+      );
+      console.log('Success:', response.data);
+    } catch(error) {
+      console.error('Error submiting decision:', error.response ? error.response.data : error.message);
+      setError(error.response ? error.response.data.detail || 'Error al enviar la solicitud. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+    }
     console.log('Solicitud rechazada:', request);
     onClose();
   };
