@@ -30,6 +30,7 @@ const Navbar = () => {
 
       if (response.status === 200) {
         console.log('Logout exitoso');
+        localStorage.clear();
         window.location.href = '/'; // Redirige a la página de inicio
       } else {
         console.error('Hubo un problema al cerrar sesión');
