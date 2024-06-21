@@ -29,15 +29,16 @@ src/
   utils/         # Utilidades y funciones auxiliares
   App.js         # Componente principal de la aplicación
   index.js       # Punto de entrada de la aplicación
+```
 
-
-# Instalación
+## Instalación
 
 Para instalar todas las dependencias necesarias, ejecute el siguiente comando:
 
-bash
-Copiar código
+```bash
 npm install
+
+
 Ejecución
 
 Para iniciar la aplicación, use el siguiente comando:
