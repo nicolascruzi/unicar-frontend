@@ -37,26 +37,26 @@ Para instalar todas las dependencias necesarias, ejecute el siguiente comando:
 
 ```bash
 npm install
+```
 
-
-Ejecución
+## Ejecución
 
 Para iniciar la aplicación, use el siguiente comando:
 
-bash
-Copiar código
+```bash
 npm start
+```
 Esto iniciará el servidor de desarrollo y podrá ver la aplicación en http://localhost:3000.
 
-Componentes
+## Componentes
 
-CarCard
+# CarCard
 Este componente muestra la información de un automóvil en una tarjeta, incluyendo detalles como marca, modelo, año y placa.
 
-CarForm
+# CarForm
 Este componente es un formulario para agregar o editar la información de un automóvil. Permite ingresar detalles como marca, modelo, año y placa, y luego enviar esta información para ser procesada.
 
-Páginas y Rutas
+## Páginas y Rutas
 
 HomePage
 La página principal muestra una lista de automóviles. Incluye un formulario para agregar nuevos automóviles y una lista de tarjetas que muestran la información de cada automóvil registrado.
@@ -64,11 +64,11 @@ La página principal muestra una lista de automóviles. Incluye un formulario pa
 App.js
 El archivo principal de la aplicación que define las rutas y estructura de navegación. Utiliza react-router-dom para gestionar las rutas y cargar diferentes páginas según la URL.
 
-Utilidades
+## Utilidades
 
 Las utilidades son funciones auxiliares que pueden ser reutilizadas en varios lugares de la aplicación. Por ejemplo, funciones para hacer llamadas a una API, formatear datos, etc.
 
 
-Despliegue
+## Despliegue
 
 El despliegue de la aplicación puede hacerse en servicios de hosting como Vercel, Netlify o Heroku. Estos servicios permiten subir la aplicación y hacerla accesible en Internet.
