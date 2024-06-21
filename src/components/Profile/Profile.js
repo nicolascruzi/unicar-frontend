@@ -14,7 +14,9 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(process.env.REACT_APP_API_URL + 'user_info/');
+        const response = await axios.get(process.env.REACT_APP_API_URL + 'user_info/', {
+          withCredentials: true,
+        });
         setUserData({
           name: response.data.name,
           email: response.data.email,

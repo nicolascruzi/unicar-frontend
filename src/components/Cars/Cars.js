@@ -16,7 +16,6 @@ const Cars = () => {
     year: '',
     license_plate: '',
     capacity: '',
-    driver: 1 // Hardcoded driver ID, replace with actual driver ID
   });
 
   useEffect(() => {
@@ -25,7 +24,9 @@ const Cars = () => {
 
   const fetchCars = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}cars/get_cars`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}cars/get_cars`, {
+        withCredentials: true,
+      });
       setCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);
@@ -50,7 +51,6 @@ const Cars = () => {
       year: '',
       license_plate: '',
       capacity: '',
-      driver: 1 // Hardcoded driver ID, replace with actual driver ID
     });
   };
 
