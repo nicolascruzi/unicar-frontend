@@ -50,10 +50,10 @@ Esto iniciará el servidor de desarrollo y podrá ver la aplicación en http://l
 
 ## Componentes
 
-# CarCard
+### CarCard
 Este componente muestra la información de un automóvil en una tarjeta, incluyendo detalles como marca, modelo, año y placa.
 
-# CarForm
+### CarForm
 Este componente es un formulario para agregar o editar la información de un automóvil. Permite ingresar detalles como marca, modelo, año y placa, y luego enviar esta información para ser procesada.
 
 ## Páginas y Rutas
