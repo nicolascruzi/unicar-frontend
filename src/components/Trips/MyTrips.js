@@ -135,6 +135,9 @@ export default function TripsPage() {
               <Typography variant="body1" gutterBottom>
                 <strong>Precio:</strong> {trip.price}
               </Typography>
+              <Typography variant="body1" gutterBottom>
+                <strong>Pasajeros:</strong>
+              </Typography>
               <Box sx={{ display: 'flex', gap: 1, margin: 2, justifyContent: "center" }}>
                 {trip.passengers.map((passenger, idx) => (
                   <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 2 }}>
