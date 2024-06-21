@@ -47,7 +47,7 @@ const Navbar = () => {
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'right' }}>
           <StyledButton color="inherit" component={Link} to="/trips" active={location.pathname === '/trips'}>
-            Viajes
+            Viajes disponibles
           </StyledButton>
           <StyledButton color="inherit" component={Link} to="/requests" active={location.pathname === '/requests'}>
             Solicitudes
@@ -56,7 +56,7 @@ const Navbar = () => {
             Autos
           </StyledButton>
           <StyledButton color="inherit" component={Link} to="/history" active={location.pathname === '/history'}>
-            Historial
+            Mis viajes
           </StyledButton>
           <StyledButton color="inherit" component={Link} to="/reviews" active={location.pathname === '/reviews'}>
             Reseñas

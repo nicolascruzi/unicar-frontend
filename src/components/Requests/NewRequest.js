@@ -256,7 +256,7 @@ const NewRequest = ({ trip_id, open, handleClose, handleSubmit }) => {
               <TextField
                 margin="dense"
                 name="street"
-                label="Adress"
+                label="Dirección (incluir comuna)"
                 type="text"
                 fullWidth
                 variant="outlined"
