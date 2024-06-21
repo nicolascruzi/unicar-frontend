@@ -89,11 +89,15 @@ const Requests = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`, {
+          withCredentials: true,
+        });
         console.log(response.data);
         setIncomingAsks(response.data);
 
-        const response_two = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks_outgoing/`);
+        const response_two = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks_outgoing/`, {
+          withCredentials: true,
+        });
         setOutgoingAsks(response_two.data);
 
       } catch(error) {
@@ -116,7 +120,9 @@ const Requests = () => {
   const handleCloseRequestDetails = async () => {
     setSelectedRequest(null);
     setRequestDialogOpen(false);
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`, {
+      withCredentials: true,
+    });
     console.log(response.data);
     setIncomingAsks(response.data);
     setOutgoingAsks(response.data.filter(request => request.status !== 'Pendiente'));

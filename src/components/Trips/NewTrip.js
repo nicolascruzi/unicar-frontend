@@ -33,7 +33,9 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
 
   const fetchCars = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}cars/get_cars/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}cars/get_cars/`, {
+        withCredentials: true,
+      });
       setCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);
@@ -190,14 +192,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   <TextField
                   margin="dense"
                   name="start_location"
-                  label="Ubicación de partida"
+                  label="Ubicación de partida (incluir comuna)"
                   type="text"
                   fullWidth
                   variant="outlined"
                   value={formValues.start_location}
                   onChange={handleChange}
                   />
-                  <FormControl variant="outlined" fullWidth style={{ marginBottom: '20px' }}>
+                  <FormControl variant="outlined" fullWidth style={{ marginTop: '10px' }}>
                   <InputLabel id="university-label">Universidad Destino</InputLabel>
                   <Select
                     labelId="university-label"
@@ -215,7 +217,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                 </div>
                 :
                 <div>
-                  <FormControl variant="outlined" fullWidth style={{ marginBottom: '20px' }}>
+                  <FormControl variant="outlined" fullWidth style={{ marginTop: '10px' }}>
                   <InputLabel id="university-label">Universidad Inicio</InputLabel>
                   <Select
                     labelId="university-label"
@@ -233,7 +235,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   <TextField
                     margin="dense"
                     name="end_location"
-                    label="Ubicación de llegada"
+                    label="Ubicación de llegada (incluir comuna)"
                     type="text"
                     fullWidth
                     variant="outlined"

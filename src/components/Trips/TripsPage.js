@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Button, Divider, TextField, InputAdornment, IconButton, Avatar, Fab } from '@mui/material';
+import { Box, Paper, Typography, Button, Divider, Fab } from '@mui/material';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import SearchIcon from '@mui/icons-material/Search';
 import SensorsIcon from '@mui/icons-material/Sensors';
-import AddIcon from '@mui/icons-material/Add';
 import { deepPurple, deepOrange } from '@mui/material/colors';
-import backgroundImg from '../../assets/images/imagenMaps2.png';
 import NewTrip from './NewTrip';
 import NewRequest from '../Requests/NewRequest';
 import axios from 'axios';
@@ -45,7 +42,9 @@ export default function TripsPage() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/upcoming/`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/upcoming/`, {
+          withCredentials: true,
+        });
         setTrips(response.data);
       } catch (error) {
         console.error('Error fetching trips:', error);
@@ -98,45 +97,12 @@ export default function TripsPage() {
       </Typography>
       <Divider sx={{ marginBottom: 5 }}></Divider>
 
-      {/* Barra de Búsqueda */}
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 4 }}>
-        <TextField
-          variant="outlined"
-          placeholder="Buscar viajes..."
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{ flexGrow: 1 }}
-        />
-        <TextField
-          select
-          variant="outlined"
-          label="Filtrar por"
-          SelectProps={{
-            native: true,
-          }}
-          sx={{ minWidth: 200 }}
-        >
-          <option value="precio">Precio</option>
-          <option value="destino">Destino</option>
-          <option value="hora">Hora de salida</option>
-          <option value="lugar">Lugar de salida</option>
-        </TextField>
-        <Button variant="contained" sx={{ backgroundColor: '#0a0a2a', '&:hover': { backgroundColor: '#00001e' } }}>
-          Buscar
-        </Button>
-      </Box>
-
       {/* Lista de Viajes */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         {trips.map((trip, index) => {
           const seatsAvailable = trip.capacity - trip.passengers.length;
+          const startDate = trip.start_date ? dayjs(trip.start_date).format('DD/MM/YYYY HH:mm') : null;
+          const endDate = trip.end_date ? dayjs(trip.end_date).format('DD/MM/YYYY HH:mm') : null;
           return (
             <Paper key={index} sx={{ p: 3, flex: '1 1 calc(50% - 16px)', boxShadow: 3, display: 'flex', minWidth: '300px', marginBottom: '16px' }}>
               <Box sx={{ width: '50%', pr: 2 }}>
@@ -150,17 +116,21 @@ export default function TripsPage() {
                   <strong>Auto:</strong> {trip.car.brand} {trip.car.model}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Inicio:</strong> {trip.start_location}
+                  <strong>Inicio:</strong> {trip.start_location.name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Destino:</strong> {trip.end_location}
+                  <strong>Destino:</strong> {trip.end_location.name}
                 </Typography>
-                <Typography variant="body1" gutterBottom>
-                  <strong>Hora de Partida:</strong> {dayjs(trip.start_date).format('DD/MM/YYYY HH:mm')}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  <strong>Hora de Llegada:</strong> {dayjs(trip.end_date).format('DD/MM/YYYY HH:mm')}
-                </Typography>
+                {startDate && (
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Hora de Partida:</strong> {startDate}
+                  </Typography>
+                )}
+                {endDate && (
+                  <Typography variant="body1" gutterBottom>
+                    <strong>Hora de Llegada:</strong> {endDate}
+                  </Typography>
+                )}
                 <Typography variant="body1" gutterBottom>
                   <strong>Capacidad Máxima:</strong> {trip.capacity}
                 </Typography>
@@ -168,22 +138,20 @@ export default function TripsPage() {
                   <strong>Asientos Disponibles:</strong> {seatsAvailable}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Pasajeros:</strong> 
+                  <strong>Precio:</strong> {trip.price}
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 1, margin: 2, justifyContent: "center" }}>
-                  {trip.passengers.map((passenger, idx) => (
-                    <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 2 }}>
-                      <Avatar sx={{ bgcolor: getRandomColor(passenger.name), width: 80, height: 80, marginBottom: 1 }}>
-                        {passenger.name.charAt(0).toUpperCase()}
-                      </Avatar>
-                      <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
-                      <Typography variant="body2" align="center">{passenger.surname}</Typography>
-                    </Box>
-                  ))}
-                </Box>
                 <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', color: 'green' }} gutterBottom>
                   <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />
-                  Viaje sale en {calculateTimeToDeparture(trip.start_date)}
+                  {startDate && (
+                    <Typography variant="body1" gutterBottom>
+                      Viaje sale en {calculateTimeToDeparture(trip.start_date)}
+                    </Typography>
+                  )}
+                  {endDate && (
+                    <Typography variant="body1" gutterBottom>
+                      Viaje finaliza en {calculateTimeToDeparture(trip.end_date)}
+                    </Typography>
+                  )}
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, margin: 3 }}>
                   <Button
@@ -208,13 +176,6 @@ export default function TripsPage() {
 
       {/* Diálogo de creación de viaje */}
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
-
-         
-    
-
-      
-
-
     </Box>
   );
 }
