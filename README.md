@@ -1,70 +1,121 @@
-# Getting Started with Create React App
+# Unicar
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+La plataforma Unicar permite a los estudiantes organizar viajes compartidos desde y hacia las universidades.
 
-## Available Scripts
+## Tabla de Contenidos
 
-In the project directory, you can run:
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Instalación](#instalación)
+- [Ejecución](#ejecución)
+- [Ejecución de Storybook](#ejecución-de-storybook)
+- [Componentes](#componentes)
+- [Páginas y Rutas](#páginas-y-rutas)
+- [Estilos](#estilos)
+- [Utilidades](#utilidades)
+- [Estado y Gestión](#estado-y-gestión)
+- [Pruebas](#pruebas)
+- [Despliegue](#despliegue)
+- [Recursos Adicionales](#recursos-adicionales)
 
-### `npm start`
+## Estructura del Proyecto
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+La estructura del proyecto es la siguiente:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+plaintext
+src/
+  components/    # Componentes de UI reutilizables
+  pages/         # Páginas de la aplicación
+  styles/        # Archivos de estilo globales
+  utils/         # Utilidades y funciones auxiliares
+  App.js         # Componente principal de la aplicación
+  index.js       # Punto de entrada de la aplicación
+.storybook/
+  main.js        # Configuración principal de Storybook
+  preview.js     # Configuración de previsualización de Storybook
 
-### `npm test`
+continua con cada contenido a mostrar con ejemplo de alguna app clasica
+# Plataforma de Gestión de Vehículos
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+La plataforma de gestión de vehículos permite a los usuarios llevar un registro detallado de sus automóviles, incluyendo información sobre mantenimientos, documentos y más.
 
-### `npm run build`
+## Tabla de Contenidos
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Instalación](#instalación)
+- [Ejecución](#ejecución)
+- [Componentes](#componentes)
+  - [CarCard](#carcard)
+  - [CarForm](#carform)
+- [Páginas y Rutas](#páginas-y-rutas)
+  - [HomePage](#homepage)
+  - [App.js](#appjs)
+- [Estilos](#estilos)
+- [Utilidades](#utilidades)
+- [Estado y Gestión](#estado-y-gestión)
+- [Pruebas](#pruebas)
+- [Despliegue](#despliegue)
+- [Recursos Adicionales](#recursos-adicionales)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Estructura del Proyecto
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+La estructura del proyecto es la siguiente:
 
-### `npm run eject`
+```plaintext
+src/
+  components/    # Componentes de UI reutilizables
+  pages/         # Páginas de la aplicación
+  styles/        # Archivos de estilo globales
+  utils/         # Utilidades y funciones auxiliares
+  App.js         # Componente principal de la aplicación
+  index.js       # Punto de entrada de la aplicación
+Instalación
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Para instalar todas las dependencias necesarias, ejecute el siguiente comando:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+bash
+Copiar código
+npm install
+Ejecución
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Para iniciar la aplicación, use el siguiente comando:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+bash
+Copiar código
+npm start
+Esto iniciará el servidor de desarrollo y podrá ver la aplicación en http://localhost:3000.
 
-## Learn More
+Componentes
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+CarCard
+Este componente muestra la información de un automóvil en una tarjeta, incluyendo detalles como marca, modelo, año y placa.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+CarForm
+Este componente es un formulario para agregar o editar la información de un automóvil. Permite ingresar detalles como marca, modelo, año y placa, y luego enviar esta información para ser procesada.
 
-### Code Splitting
+Páginas y Rutas
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+HomePage
+La página principal muestra una lista de automóviles. Incluye un formulario para agregar nuevos automóviles y una lista de tarjetas que muestran la información de cada automóvil registrado.
 
-### Analyzing the Bundle Size
+App.js
+El archivo principal de la aplicación que define las rutas y estructura de navegación. Utiliza react-router-dom para gestionar las rutas y cargar diferentes páginas según la URL.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Estilos
 
-### Making a Progressive Web App
+Los estilos se pueden definir en archivos CSS o mediante librerías como styled-components. Incluyen estilos globales para toda la aplicación y estilos específicos para componentes individuales.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Utilidades
 
-### Advanced Configuration
+Las utilidades son funciones auxiliares que pueden ser reutilizadas en varios lugares de la aplicación. Por ejemplo, funciones para hacer llamadas a una API, formatear datos, etc.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Estado y Gestión
 
-### Deployment
+El estado de la aplicación se puede gestionar con hooks de React como useState y useEffect para manejar el estado local y los efectos secundarios. Para una gestión de estado más compleja, se pueden usar librerías como Redux.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Pruebas
 
-### `npm run build` fails to minify
+Las pruebas se pueden realizar utilizando herramientas como Jest y React Testing Library. Estas pruebas aseguran que los componentes y funciones de la aplicación se comporten como se espera.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Despliegue
+
+El despliegue de la aplicación puede hacerse en servicios de hosting como Vercel, Netlify o Heroku. Estos servicios permiten subir la aplicación y hacerla accesible en Internet.
