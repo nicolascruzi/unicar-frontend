@@ -96,19 +96,19 @@ describe('Requests component', () => {
     // Esperar a que se carguen los datos de las solicitudes salientes
     await waitFor(() => {
       // Verificar la presencia de los elementos esperados en la tabla de salientes
-      expect(screen.queryByText('Carlos Rodríguez')).toBeInTheDocument();
+      expect(screen.getByText('Carlos Rodríguez')).toBeInTheDocument();
     });
 
     await waitFor(() => {
-      expect(screen.queryByText('Toyota Corolla')).toBeInTheDocument();
+      expect(screen.getByText('Toyota Corolla')).toBeInTheDocument();
     });
 
     await waitFor(() => {
-      expect(screen.queryByText('Avenida 321, Ciudad D')).toBeInTheDocument();
+      expect(screen.getByText('Avenida 321, Ciudad D')).toBeInTheDocument();
     });
 
     await waitFor(() => {
-      expect(screen.queryByText('Pendiente')).toBeInTheDocument();
+      expect(screen.getByText('Pendiente')).toBeInTheDocument();
     });
 
     // Opcional: verificar que las llamadas a axios se realizaron con las URL correctas
