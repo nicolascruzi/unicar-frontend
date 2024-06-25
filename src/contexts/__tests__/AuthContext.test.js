@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthProvider, useAuth } from '../AuthContext';
 
@@ -22,50 +22,44 @@ describe('AuthContext', () => {
   }
 
   it('should initialize with isAuthenticated false', () => {
-    const { getByTestId } = render(
+    render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
-    expect(getByTestId('status')).toHaveTextContent('Logged Out');
+    expect(screen.getByTestId('status')).toHaveTextContent('Logged Out');
   });
 
   it('should set isAuthenticated to true on log out', () => {
-    const { getByTestId } = render(
+    render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
-    const loginBtn = getByTestId('login-btn');
-    act(() => {
-      userEvent.click(loginBtn);
-    });
+    const loginBtn = screen.getByTestId('login-btn');
+    userEvent.click(loginBtn);
 
-    expect(getByTestId('status')).toHaveTextContent('Logged Out');
+    expect(screen.getByTestId('status')).toHaveTextContent('Logged Out');
   });
 
   it('should set isAuthenticated to false on logout', () => {
-    const { getByTestId } = render(
+    render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     );
 
-    const loginBtn = getByTestId('login-btn');
-    const logoutBtn = getByTestId('logout-btn');
+    const loginBtn = screen.getByTestId('login-btn');
+    const logoutBtn = screen.getByTestId('logout-btn');
 
     // Login first
-    act(() => {
-      userEvent.click(loginBtn);
-    });
-    expect(getByTestId('status')).toHaveTextContent('Logged Out');
+    userEvent.click(loginBtn);
+    expect(screen.getByTestId('status')).toHaveTextContent('Logged Out');
 
     // Logout
-    act(() => {
-      userEvent.click(logoutBtn);
-    });
-    expect(getByTestId('status')).toHaveTextContent('Logged Out');
+    userEvent.click(logoutBtn);
+    expect(screen.getByTestId('status')).toHaveTextContent('Logged Out');
   });
 });

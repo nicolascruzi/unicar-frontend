@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import AlertBox from './AlertBox';
 import { handleCloseAlert } from '../utils/handleCloseAlert';
 
@@ -10,7 +10,7 @@ import { handleCloseAlert } from '../utils/handleCloseAlert';
 
 describe('AlertBox Component', () => {
   it('renders with correct props', () => {
-    const { getByText } = render(
+    render(
       <AlertBox
         severity="error"
         messageAlert="Test Error Message"
@@ -19,7 +19,7 @@ describe('AlertBox Component', () => {
         hideDuration={3000}
       />
     );
-    expect(getByText('Test Error Message')).toBeInTheDocument();
+    expect(screen.getByText('Test Error Message')).toBeInTheDocument();
   });
 
   // test handle close alert

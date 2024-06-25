@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import SignUpForm from '../SignUpForm';
 import { BrowserRouter as Router } from 'react-router-dom'; 
 import { checkPassword, checkFields, checkEmail } from '../../../utils/signUpUtils';
@@ -55,31 +55,31 @@ describe('SignUpForm Component', () => {
   test('SignUpForm component', async () => {
 
     axios.post.mockResolvedValue({ data: { message: 'Usuario creado exitosamente' } });
-    const { getByLabelText, getByText } = render(
+    render(
         <Router> {/* Envuelve SignUpForm con Router */}
           <SignUpForm />
         </Router>
       );
 
     // Simulación de entrada de datos
-    fireEvent.change(getByLabelText('Nombre'), { target: { value: 'John Doe' } });
-    fireEvent.change(getByLabelText('Email'), { target: { value: 'johndoe@example.com' } });
-    fireEvent.change(getByLabelText('Contraseña'), { target: { value: 'password123' } });
-    fireEvent.change(getByLabelText('Verificar Contraseña'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'John Doe' } });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'johndoe@example.com' } });
+    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('Verificar Contraseña'), { target: { value: 'password123' } });
     // Abrir el menú desplegable de "Universidad"
-    fireEvent.mouseDown(getByLabelText('Universidad'));
+    fireEvent.mouseDown(screen.getByLabelText('Universidad'));
 
     // Seleccionar una opción del menú desplegable de "Universidad"
-    fireEvent.click(getByText('Universidad de Chile'));
+    fireEvent.click(screen.getByText('Universidad de Chile'));
 
     // Simulación de cambio en el campo "Género"
-    fireEvent.mouseDown(getByLabelText('Género'));
+    fireEvent.mouseDown(screen.getByLabelText('Género'));
 
-    fireEvent.click(getByText('Hombre'));
+    fireEvent.click(screen.getByText('Hombre'));
 
 
     // Simulación de clic en el botón de registrarse
-    fireEvent.click(getByText('Registrarse'));
+    fireEvent.click(screen.getByText('Registrarse'));
     
 
     // Esperar a que la promesa se resuelva
@@ -88,7 +88,7 @@ describe('SignUpForm Component', () => {
     });
 
     // Verificar el comportamiento dentro del then
-    expect(getByText('Usuario creado exitosamente')).toBeInTheDocument();
+    expect(screen.getByText('Usuario creado exitosamente')).toBeInTheDocument();
 
 
 
@@ -96,28 +96,32 @@ describe('SignUpForm Component', () => {
     await waitFor(() => {    
       // Verifica que axios.post haya sido llamado correctamente
       expect(setOpenErrorAlertMock).toHaveBeenCalledTimes(0); // Verifica llamadas a setOpenErrorAlert
+    });
+
+    await waitFor(() => {
       expect(setMessageAlertMock).toHaveBeenCalledTimes(0); // Verifica llamadas a setMessageAlert
     });
   });
 
+
   it('handles sign up failure', async () => {
     axios.post.mockRejectedValue({ response: { data: { message: 'Error al crear usuario' } } });
-    const { getByLabelText, getByText } = render(
+    render(
       <Router>
         <SignUpForm />
       </Router>
     );
 
-    fireEvent.change(getByLabelText('Nombre'), { target: { value: 'John Doe' } });
-    fireEvent.change(getByLabelText('Email'), { target: { value: 'john@uc.cl' } });
-    fireEvent.change(getByLabelText('Contraseña'), { target: { value: 'password123' } });
-    fireEvent.change(getByLabelText('Verificar Contraseña'), { target: { value: 'password123' } });
-    fireEvent.mouseDown(getByLabelText('Universidad'));
-    fireEvent.click(getByText('Universidad de Chile'));
-    fireEvent.mouseDown(getByLabelText('Género'));
-    fireEvent.click(getByText('Hombre'));
+    fireEvent.change(screen.getByLabelText('Nombre'), { target: { value: 'John Doe' } });
+    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'john@uc.cl' } });
+    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('Verificar Contraseña'), { target: { value: 'password123' } });
+    fireEvent.mouseDown(screen.getByLabelText('Universidad'));
+    fireEvent.click(screen.getByText('Universidad de Chile'));
+    fireEvent.mouseDown(screen.getByLabelText('Género'));
+    fireEvent.click(screen.getByText('Hombre'));
 
-    fireEvent.click(getByText('Registrarse'));
+    fireEvent.click(screen.getByText('Registrarse'));
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledTimes(1);

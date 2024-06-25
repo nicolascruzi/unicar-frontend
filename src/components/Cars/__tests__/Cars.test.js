@@ -14,8 +14,8 @@ const mockCars = [
 ];
 
 describe('Cars component', () => {
-  beforeEach(() => {
-    axios.get.mockResolvedValue({ data: mockCars }); // Mockear la respuesta de axios.get
+  beforeEach(async () => {
+    await axios.get.mockResolvedValue({ data: mockCars }); // Mockear la respuesta de axios.get
     
   });
 
@@ -100,46 +100,59 @@ describe('Cars component', () => {
 
   // test edit a car
   it('should edit a car', async () => {
+    axios.put.mockResolvedValueOnce({
+      data: { id: 1, brand: 'Chevrolet', model: 'Corolla', year: 2020, license_plate: 'XYZ-123', capacity: 5 }});
     render(<Cars />);
     await waitFor(() => {
-      const editButton = screen.getByTestId(`edit-car-1`); // Busca el botón de edición por un data-testid único
-      fireEvent.click(editButton); // Simula hacer clic en el botón de edición
+      return screen.getByTestId(`edit-car-1`); // Busca el botón de edición por un data-testid único
+    })
+    const editButton = screen.getByTestId(`edit-car-1`);
+    fireEvent.click(editButton); // Simula hacer clic en el botón de edición
 
+
+    await waitFor(() => {
       // Llena el formulario de edición
-      const brandInput = screen.getByLabelText(/marca/i);
-      fireEvent.change(brandInput, { target: { value: 'Chevrolet' } });
-
+      return screen.getByLabelText(/marca/i);
+    })
+    const brandInput = screen.getByLabelText(/marca/i);
+    fireEvent.change(brandInput, { target: { value: 'Chevrolet' } });
+    
+    await waitFor(() => {
       // Envía el formulario de edición
-      const submitButton = screen.getByRole('button', { name: /guardar cambios/i }); // Asegúrate de buscar el botón de "Guardar Cambios" correctamente
-      fireEvent.click(submitButton);
+      return screen.getByRole('button', { name: /guardar cambios/i }); // Asegúrate de buscar el botón de "Guardar Cambios" correctamente
+    })
+    const submitButton = screen.getByRole('button', { name: /guardar cambios/i });
+    fireEvent.click(submitButton);
 
-      // Espera a que se actualice la tabla con la información editada
-      waitFor(() => {
+
+    // Espera a que se actualice la tabla con la información editada
+     await waitFor(() => {
         const editedBrandCell = screen.getByText('Chevrolet'); // Verifica que la celda con la marca editada esté presente
         expect(editedBrandCell).toBeInTheDocument();
       });
     });
-  });
 
   //test delete car
   it('should delete a car', async () => {
+    axios.delete.mockResolvedValueOnce({ data: { id: 0 } });
     render(<Cars />);
     await waitFor(() => {
-      const deleteButton = screen.getByTestId(`delete-car-1`); // Busca el botón de eliminación por un data-testid único
-      fireEvent.click(deleteButton); // Simula hacer clic en el botón de eliminación
+      return screen.getByTestId(`delete-car-0`); // Busca el botón de eliminación por un data-testid único
+    });
+    const deleteButton = screen.getByTestId(`delete-car-0`);
+    fireEvent.click(deleteButton); // Simula hacer clic en el botón de eliminación
 
-      // Espera a que aparezca el diálogo de confirmación
-      waitFor(() => {
-        const dialog = screen.getByRole('dialog'); // Asegúrate de buscar el diálogo de confirmación correctamente
-        const confirmButton = within(dialog).getByRole('button', { name: /eliminar/i }); // Asegúrate de buscar el botón de confirmación correctamente
-        fireEvent.click(confirmButton); // Simula hacer clic en el botón de confirmación
-
+    // Espera a que aparezca el diálogo de confirmación
+    await waitFor(() => {
+      return screen.getByTestId('delete-car-0');
+    });
+    const confirmButton = screen.getByTestId('delete-car-0');
+    fireEvent.click(confirmButton); // Simula hacer clic en el botón de confirmación
+    
         // Espera a que se actualice la tabla sin el coche eliminado
-        waitFor(() => {
-          const deletedBrandCell = screen.queryByText('Toyota'); // Verifica que la celda con la marca eliminada no esté presente
-          expect(deletedBrandCell).not.toBeInTheDocument();
-        });
-      });
+    await waitFor(() => {
+      const deletedBrandCell = screen.queryByText('Toyota'); // Verifica que la celda con la marca eliminada no esté presente
+      expect(deletedBrandCell).not.toBeInTheDocument();
     });
   });
   

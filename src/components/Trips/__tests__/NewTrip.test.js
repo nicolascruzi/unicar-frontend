@@ -16,12 +16,12 @@ describe('NewTrip Component', () => {
   });
 
   test('renders NewTrip component', () => {
-    const { getByText } = render(
+    render(
         <MemoryRouter>
             <NewTrip open={true} handleClose={() => {}} handleSubmit={() => {}} />
         </MemoryRouter>
     );
-    const titleElement = getByText('Publicar Viaje');
+    const titleElement = screen.getByText('Publicar Viaje');
     expect(titleElement).toBeInTheDocument();
   });
 
@@ -96,7 +96,7 @@ describe('NewTrip Component', () => {
         expect(handleClose).toHaveBeenCalledTimes(1);
       });
     
-      it('handles form submit error correctly', async () => {
+      it('handles form submit error correctly - test 2', async () => {
         // Configurar mock de axios para respuesta de error
         mockAxios.onPost(`${process.env.REACT_APP_API_URL}trips/create/`).reply(500, { message: 'Internal Server Error' });
     
@@ -125,7 +125,7 @@ describe('NewTrip Component', () => {
       });
 
       // test vuelta
-        it('handles form submit correctly on success', async () => {
+        it('handles form submit correctly on success - test 3', async () => {
             // Configurar mock de axios para respuesta exitosa
             mockAxios.onPost(`${process.env.REACT_APP_API_URL}trips/create/`).reply(200, { message: 'Trip created successfully' });
         

@@ -27,24 +27,24 @@ describe('LandingPage component', () => {
 
   // test handle Login
     it('should navigate to login page when "Iniciar Sesión" button is clicked', () => {
-        const { getByText } = render(
+      render(
         <Router>
             <LandingPage />
         </Router>
         );
-        const loginButton = getByText(/Iniciar Sesión/i);
+        const loginButton = screen.getByText(/Iniciar Sesión/i);
         loginButton.click();
         expect(window.location.pathname).toBe('/login');
     });
 
     // test handle SignUp
     it('should navigate to signup page when "Registrarse" button is clicked', () => {
-        const { getByText } = render(
+      render(
         <Router>
             <LandingPage />
         </Router>
         );
-        const signUpButton = getByText(/Registrarse/i);
+        const signUpButton = screen.getByText(/Registrarse/i);
         signUpButton.click();
         expect(window.location.pathname).toBe('/signup');
     });

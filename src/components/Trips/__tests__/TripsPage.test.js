@@ -49,17 +49,34 @@ describe('TripsPage Component', () => {
         // Verificar que se carguen los viajes correctamente
         const tripsElements = screen.getAllByTestId(/trip-title-/i);
         expect(tripsElements).toHaveLength(1);
+    });
   
         // Verificar que los datos del viaje se rendericen correctamente
+    await waitFor(() => {
         const trip = mockTrips[0];
         expect(screen.getByText(`Viaje de ${trip.driver.name}`)).toBeInTheDocument();
-        expect(screen.getByText(`${trip.car.brand} ${trip.car.model}`)).toBeInTheDocument();
-        expect(screen.getByText(`Inicio:`)).toBeInTheDocument();
-        expect(screen.getByText(`Destino:`)).toBeInTheDocument();
-        expect(screen.getByText(`Capacidad Máxima:`)).toBeInTheDocument();
-        expect(screen.getByText(`Precio:`)).toBeInTheDocument();
+    })
 
-      });
+    await waitFor(() => {
+      const trip = mockTrips[0];
+      expect(screen.getByText(`${trip.car.brand} ${trip.car.model}`)).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+        expect(screen.getByText(`Inicio:`)).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+        expect(screen.getByText(`Destino:`)).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+        expect(screen.getByText(`Capacidad Máxima:`)).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+        expect(screen.getByText(`Precio:`)).toBeInTheDocument();
+    });
   });
 
   test('handles opening and closing NewTrip dialog', async () => {

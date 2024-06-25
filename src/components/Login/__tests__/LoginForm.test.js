@@ -66,12 +66,12 @@ describe('LoginForm component', () => {
 
     // test handle go back
     it('should navigate to home page when "Volver" button is clicked', () => {
-        const { getByRole } = render(
+        render(
         <Router>
             <LoginForm />
         </Router>
         );
-        const goBackButton = getByRole('button', { name: /volver/i });
+        const goBackButton = screen.getByRole('button', { name: /volver/i });
         goBackButton.click();
         expect(window.location.pathname).toBe('/');
     });

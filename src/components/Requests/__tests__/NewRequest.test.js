@@ -18,19 +18,24 @@ describe('NewRequest Component', () => {
     window.alert = jest.fn(); // Mockear window.alert antes de todas las pruebas
   });
 
-  beforeEach(() => {
-    render(
-        <MemoryRouter>
-         <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
-        </MemoryRouter>
-    );
-  });
-
+  // beforeEach(() => {
+  //   render(
+  //       <MemoryRouter>
+  //        <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+  //       </MemoryRouter>
+  //   );
+  // });
+  
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test('renders the dialog with form elements correctly', () => {
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
     expect(screen.getByRole('heading', { name: /Solicitar Viaje/i })).toBeInTheDocument();
     expect(screen.getByText(/Complete los siguientes campos solicitados para publicar su solicitud./i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Dirección \(incluir comuna\)/i)).toBeInTheDocument();
@@ -39,18 +44,33 @@ describe('NewRequest Component', () => {
   });
 
   test('updates input fields correctly', () => {
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
     const streetInput = screen.getByLabelText(/Dirección \(incluir comuna\)/i);
     fireEvent.change(streetInput, { target: { value: 'Av. Siempre Viva 742' } });
     expect(streetInput.value).toBe('Av. Siempre Viva 742');
   });
 
   test('calls handleClose when the cancel button is clicked', () => {
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
     const cancelButton = screen.getByText(/Cancelar/i);
     fireEvent.click(cancelButton);
     expect(mockHandleClose).toHaveBeenCalledTimes(1);
   });
 
   test('shows error message when form is submitted with empty fields', async () => {
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
     const submitButton = screen.getByRole('button', { name: /Solicitar Viaje/i });
     fireEvent.click(submitButton);
     await waitFor(() => {
@@ -59,6 +79,11 @@ describe('NewRequest Component', () => {
   });
 
   test('submits form successfully and calls handleSubmit', async () => {
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
     axios.post.mockResolvedValue({ data: {} });
     Cookies.get.mockReturnValue('fake-csrf-token');
 
@@ -77,12 +102,23 @@ describe('NewRequest Component', () => {
           withCredentials: true,
         }
       );
+    });
+
+    await waitFor(() => {
       expect(mockHandleClose).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
       expect(mockHandleSubmit).toHaveBeenCalledWith({ street: 'Av. Siempre Viva 742', trip: trip_id });
     });
   });
 
   test('handles form submission error with response detail', async () => {
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
     axios.post.mockRejectedValue({
       response: { data: { detail: 'Error al enviar la solicitud.' } }
     });
@@ -102,6 +138,11 @@ describe('NewRequest Component', () => {
     axios.post.mockRejectedValue({
       response: { data: {} }
     });
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
 
     const streetInput = screen.getByLabelText(/Dirección \(incluir comuna\)/i);
     fireEvent.change(streetInput, { target: { value: 'Av. Siempre Viva 742' } });
@@ -116,6 +157,11 @@ describe('NewRequest Component', () => {
 
   test('handles form submission error without response', async () => {
     axios.post.mockRejectedValue(new Error('Network Error'));
+    render(
+      <MemoryRouter>
+       <NewRequest trip_id={trip_id} open={true} handleClose={mockHandleClose} handleSubmit={mockHandleSubmit} />;
+      </MemoryRouter>
+    );
 
     const streetInput = screen.getByLabelText(/Dirección \(incluir comuna\)/i);
     fireEvent.change(streetInput, { target: { value: 'Av. Siempre Viva 742' } });

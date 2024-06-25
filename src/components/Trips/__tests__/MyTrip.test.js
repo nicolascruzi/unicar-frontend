@@ -85,14 +85,14 @@ describe('calculateTimeToDeparture function', () => {
       expect(resultCurrent).toBeNull();
     });
   
-    it('returns the correct time duration string when departure time is in the future', () => {
+    it('returns the correct time duration string when departure time is in the future for hours', () => {
       const futureTime = dayjs().add(2, 'hours').toISOString();
       const result = calculateTimeToDeparture(futureTime);
       expect(result).toMatch(/^[1-9][0-9]* horas?$|^60 minutos$/);
     });
 
     // calculate with result in minutes
-    it('returns the correct time duration string when departure time is in the future', () => {
+    it('returns the correct time duration string when departure time is in the future for minutes', () => {
         const futureTime = dayjs().add(30, 'minutes').toISOString();
         const result = calculateTimeToDeparture(futureTime);
         expect(result).toMatch(/^[1-9][0-9]* minutos$/);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import PrivateRoute from '../PrivateRoute';
@@ -17,7 +17,7 @@ describe('PrivateRoute component', () => {
   it('renders Outlet when user is authenticated', () => {
     Cookies.get.mockReturnValueOnce('sessionid'); // Simular que el usuario está autenticado
 
-    const { getByText } = render(
+    render(
       <MemoryRouter initialEntries={['/private']}>
         <Routes>
           <Route path="/private" element={<PrivateRoute />} />
@@ -26,14 +26,14 @@ describe('PrivateRoute component', () => {
       </MemoryRouter>
     );
 
-    const outletElement = getByText('Public Page'); // Verificar que se renderiza la página pública
+    const outletElement = screen.getByText('Public Page'); // Verificar que se renderiza la página pública
     expect(outletElement).toBeInTheDocument();
   });
 
   it('redirects to "/" when user is not authenticated', () => {
     Cookies.get.mockReturnValueOnce(undefined); // Simular que el usuario no está autenticado
 
-    const { queryByTestId } = render(
+    render(
       <MemoryRouter initialEntries={['/private']}>
         <Routes>
           <Route path="/private" element={<PrivateRoute />} />
@@ -43,7 +43,7 @@ describe('PrivateRoute component', () => {
 
     );
 
-    const publicPageElement = queryByTestId('public-page'); // Debe redirigir a la página pública cuando el usuario no está autenticado
+    const publicPageElement = screen.queryByTestId('public-page'); // Debe redirigir a la página pública cuando el usuario no está autenticado
     expect(publicPageElement).toBeInTheDocument();
   });
 });

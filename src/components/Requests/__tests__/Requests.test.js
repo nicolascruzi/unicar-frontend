@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import axios from 'axios'; // asegúrate de tener instalado axios-mock-adapter
 import Requests from '../Requests'; // ajusta la ruta según sea necesario
 import { handleApproveRequest,
@@ -61,20 +61,23 @@ describe('Requests component', () => {
     });
 
     // Renderizar componente
-    const { getByText, getByTestId } = render(<Requests />);
+    render(<Requests />);
 
     // Esperar a que se carguen los datos
     await waitFor(() => {
-      expect(getByText('Solicitudes')).toBeInTheDocument();
-      expect(getByTestId('resolver-button-1')).toBeInTheDocument();
+      expect(screen.getByText('Solicitudes')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('resolver-button-1')).toBeInTheDocument();
     });
 
     // Verificar la tabla de solicitudes entrantes
-    expect(getByText('Ana Pérez')).toBeInTheDocument();
-    expect(getByText('Calle 123, Ciudad A')).toBeInTheDocument();
-    expect(getByText('4.5')).toBeInTheDocument();
-    expect(getByText('Femenino')).toBeInTheDocument();
-    expect(getByText('Universidad X')).toBeInTheDocument();
+    expect(screen.getByText('Ana Pérez')).toBeInTheDocument();
+    expect(screen.getByText('Calle 123, Ciudad A')).toBeInTheDocument();
+    expect(screen.getByText('4.5')).toBeInTheDocument();
+    expect(screen.getByText('Femenino')).toBeInTheDocument();
+    expect(screen.getByText('Universidad X')).toBeInTheDocument();
   });
 
   test('switches tabs and renders outgoing requests table', async () => {
@@ -85,18 +88,27 @@ describe('Requests component', () => {
     axios.get.mockResolvedValueOnce({ data: mockOutgoingRequests });
 
     // Renderizar el componente
-    const { getByText, queryByText } = render(<Requests />);
+    render(<Requests />);
 
     // Cambiar a la pestaña de solicitudes salientes
-    fireEvent.click(getByText('Solicitudes Salientes'));
+    fireEvent.click(screen.getByText('Solicitudes Salientes'));
 
     // Esperar a que se carguen los datos de las solicitudes salientes
     await waitFor(() => {
       // Verificar la presencia de los elementos esperados en la tabla de salientes
-      expect(queryByText('Carlos Rodríguez')).toBeInTheDocument();
-      expect(queryByText('Toyota Corolla')).toBeInTheDocument();
-      expect(queryByText('Avenida 321, Ciudad D')).toBeInTheDocument();
-      expect(queryByText('Pendiente')).toBeInTheDocument();
+      expect(screen.queryByText('Carlos Rodríguez')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Toyota Corolla')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Avenida 321, Ciudad D')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Pendiente')).toBeInTheDocument();
     });
 
     // Opcional: verificar que las llamadas a axios se realizaron con las URL correctas
