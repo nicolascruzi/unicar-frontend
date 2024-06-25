@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+# Unicar
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+La plataforma Unicar permite a los estudiantes organizar viajes compartidos desde y hacia las universidades.
 
-## Available Scripts
+## Tabla de Contenidos
 
-In the project directory, you can run:
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Instalación](#instalación)
+- [Ejecución](#ejecución)
+- [Componentes](#componentes)
+  - [MapComponent](#mapcomponent)
+  - [Navbar](#navbar)
+  - [LoginForm](#loginform)
+  - [SignUpForm](#signupform)
+- [Páginas y Rutas](#páginas-y-rutas)
+  - [App.js](#appjs)
+- [Utilidades](#utilidades)
+  - [PrivateRoute](#privateroute)
+  - [Theme](#privateroute)
+- [Despliegue](#despliegue)
 
-### `npm start`
+## Estructura del Proyecto
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+La estructura del proyecto es la siguiente:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```plaintext
+src/
+  assets/
+    images/
+  components/    # Componentes de UI reutilizables y vistas
+  contexts/      # Contiene el AuthContext
+  utils/         # Utilidades y funciones auxiliares
+  App.js         # Componente principal de la aplicación
+  index.js       # Punto de entrada de la aplicación
+```
 
-### `npm test`
+## Instalación
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Para instalar todas las dependencias necesarias, ejecute el siguiente comando:
 
-### `npm run build`
+```bash
+npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Ejecución
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Para iniciar la aplicación, use el siguiente comando:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm start
+```
+Esto iniciará el servidor de desarrollo y podrá ver la aplicación en http://localhost:3000.
 
-### `npm run eject`
+## Componentes
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### MapComponent
+Este componente muestra la información del mapa, utilizando la api key de Google Maps, es llamada en todas las vistas en donde se requiere renderizar un mapa.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Navbar
+Este componente se muestra en la parte superior y contiene los botones para navegar en la plataforma.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### LoginForm
+Este componente renderiza el formulario para iniciar sesion.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### SignUpForm
+Este componente renderiza el formulario para registrarse como usuario de la plataforma.
 
-## Learn More
+## Páginas y Rutas
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### App.js
+El archivo principal de la aplicación que define las rutas y estructura de navegación. Utiliza react-router-dom para gestionar las rutas y cargar diferentes páginas según la URL.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Utilidades
 
-### Code Splitting
+### PrivateRoute
+Se utilizo esta herramienta para privatizar la ruta, exigiendo tener session id requerido para acceder a rutas especificas.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Theme
+Se utilizo este archivo para estansarizar estilos de la app.
 
-### Analyzing the Bundle Size
+## Despliegue
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+El despliegue de la aplicación se realizo a traves del servicio Vercel, el cual se encarga del hosting de la app y de realizar CD al actualizar la rama main.
