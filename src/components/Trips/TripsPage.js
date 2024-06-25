@@ -109,7 +109,7 @@ export default function TripsPage() {
                 <MapComponent encodedPolyline={trip.polyline} />
               </Box>
               <Box sx={{ width: '50%', padding: "10px" }}>
-                <Typography variant="h5" align="center" gutterBottom marginBottom={3}>
+              <Typography variant="h5" align="center" gutterBottom marginBottom={3} data-testid={`trip-title-${index}`}>
                   Viaje de {trip.driver.name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
