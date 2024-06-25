@@ -149,10 +149,10 @@ const Cars = () => {
                 <TableCell>{car.license_plate}</TableCell>
                 <TableCell>{car.capacity}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(index)}>
+                  <IconButton onClick={() => handleEdit(index)} data-testid={`edit-car-${index}`}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(index)}>
+                  <IconButton onClick={() => handleDelete(index)} data-testid={`delete-car-${index}`}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>

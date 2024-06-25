@@ -9,38 +9,39 @@ import SensorsIcon from '@mui/icons-material/Sensors';
 import axios from 'axios';
 import MapComponent from '../GoogleMaps/MapComponent';
 import NewTrip from './NewTrip';
+import { calculateTimeToDeparture, getRandomColor } from '../../utils/utilsMyTrips';
 
-dayjs.extend(duration);
-dayjs.extend(utc);
-dayjs.extend(timezone);
+// dayjs.extend(duration);
+// dayjs.extend(utc);
+// dayjs.extend(timezone);
 
-const calculateTimeToDeparture = (departureTime) => {
-  if (!departureTime) {
-    return null; // No mostrar si no hay hora de salida
-  }
+// const calculateTimeToDeparture = (departureTime) => {
+//   if (!departureTime) {
+//     return null; // No mostrar si no hay hora de salida
+//   }
 
-  const now = dayjs();
-  const departure = dayjs(departureTime);
-  const diff = departure.diff(now);
+//   const now = dayjs();
+//   const departure = dayjs(departureTime);
+//   const diff = departure.diff(now);
 
-  if (diff <= 0) {
-    return null; // No mostrar si el tiempo es negativo o cero
-  }
+//   if (diff <= 0) {
+//     return null; // No mostrar si el tiempo es negativo o cero
+//   }
 
-  const tripDuration = dayjs.duration(diff);
+//   const tripDuration = dayjs.duration(diff);
 
-  if (tripDuration.asMinutes() <= 60) {
-    return `${Math.floor(tripDuration.asMinutes())} minutos`;
-  } else {
-    return `${Math.floor(tripDuration.asHours())} horas`;
-  }
-};
+//   if (tripDuration.asMinutes() <= 60) {
+//     return `${Math.floor(tripDuration.asMinutes())} minutos`;
+//   } else {
+//     return `${Math.floor(tripDuration.asHours())} horas`;
+//   }
+// };
 
-const getRandomColor = (name) => {
-  const colors = [deepPurple[500], deepOrange[500]];
-  const randomIndex = Math.floor(Math.random() * colors.length);
-  return colors[randomIndex];
-};
+// const getRandomColor = (name) => {
+//   const colors = [deepPurple[500], deepOrange[500]];
+//   const randomIndex = Math.floor(Math.random() * colors.length);
+//   return colors[randomIndex];
+// };
 
 export default function TripsPage() {
   const [open, setOpen] = useState(false);

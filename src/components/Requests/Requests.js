@@ -22,6 +22,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import RequestDetailsDialog from './RequestDetailsDialog'; // Asegúrate de importar el Dialog
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { handleTabChange, handleOpenRequestDetails, handleCloseRequestDetails,
+   handleApproveRequest, handleRejectRequest } from '../../utils/utilsRequests';
 
 // Datos de ejemplo
 // const incomingRequests = [
@@ -108,39 +110,39 @@ const Requests = () => {
     fetchRequests();
   }, []);
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  // const handleTabChange = (event, newValue) => {
+  //   setTabValue(newValue);
+  // };
 
-  const handleOpenRequestDetails = (request) => {
-    setSelectedRequest(request);
-    setRequestDialogOpen(true);
-  };
+  // const handleOpenRequestDetails = (request) => {
+  //   setSelectedRequest(request);
+  //   setRequestDialogOpen(true);
+  // };
 
-  const handleCloseRequestDetails = async () => {
-    setSelectedRequest(null);
-    setRequestDialogOpen(false);
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`, {
-      withCredentials: true,
-    });
-    console.log(response.data);
-    setIncomingAsks(response.data);
-    setOutgoingAsks(response.data.filter(request => request.status !== 'Pendiente'));
-  };
+  // const handleCloseRequestDetails = async () => {
+  //   setSelectedRequest(null);
+  //   setRequestDialogOpen(false);
+  //   const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`, {
+  //     withCredentials: true,
+  //   });
+  //   console.log(response.data);
+  //   setIncomingAsks(response.data);
+  //   setOutgoingAsks(response.data.filter(request => request.status !== 'Pendiente'));
+  // };
 
-  const handleApproveRequest = async (request) => {
-    // Lógica para aprobar la solicitud
+  // const handleApproveRequest = async (request) => {
+  //   // Lógica para aprobar la solicitud
 
-    console.log('Solicitud aprobada:', request);
+  //   console.log('Solicitud aprobada:', request);
 
-    handleCloseRequestDetails();
-  };
+  //   handleCloseRequestDetails();
+  // };
 
-  const handleRejectRequest = (request) => {
-    // Lógica para rechazar la solicitud
-    console.log('Solicitud rechazada:', request);
-    handleCloseRequestDetails();
-  };
+  // const handleRejectRequest = (request) => {
+  //   // Lógica para rechazar la solicitud
+  //   console.log('Solicitud rechazada:', request);
+  //   handleCloseRequestDetails();
+  // };
 
   return (
     <Box sx={{ p: 8 }}>
@@ -155,7 +157,7 @@ const Requests = () => {
       <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: 2 }}>
         <Tabs
           value={tabValue}
-          onChange={handleTabChange}
+          onChange={(event, newValue) => handleTabChange(event, newValue, setTabValue)}
           indicatorColor="primary"
           textColor="primary"
           aria-label="Tablas de solicitudes"
@@ -188,7 +190,7 @@ const Requests = () => {
                     <TableCell>{request.universidad}</TableCell>
                     <TableCell>
                       { request.status === 'Pendiente' && 
-                      <IconButton onClick={() => handleOpenRequestDetails(request)} size="small">
+                      <IconButton onClick={() => handleOpenRequestDetails(request, setSelectedRequest, setRequestDialogOpen)} size="small" data-testid={`resolver-button-${request.id}`}>
                         <Button variant="outlined" color="primary"  size="small">
                           Resolver
                         </Button>
@@ -243,9 +245,9 @@ const Requests = () => {
         <RequestDetailsDialog
           request={selectedRequest}
           open={requestDialogOpen}
-          onClose={handleCloseRequestDetails}
-          onApprove={() => handleApproveRequest(selectedRequest)}
-          onReject={() => handleRejectRequest(selectedRequest)}
+          onClose={() => handleCloseRequestDetails(setSelectedRequest, setRequestDialogOpen, setIncomingAsks, setOutgoingAsks)}
+          onApprove={() => handleApproveRequest(selectedRequest, handleCloseRequestDetails, setSelectedRequest, setRequestDialogOpen, setIncomingAsks, setOutgoingAsks)}
+          onReject={() => handleRejectRequest(selectedRequest, handleCloseRequestDetails, setSelectedRequest, setRequestDialogOpen, setIncomingAsks, setOutgoingAsks)}
         />
       )}
     </Box>
