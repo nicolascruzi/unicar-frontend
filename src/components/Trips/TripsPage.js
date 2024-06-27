@@ -20,7 +20,7 @@ const calculateTimeToDeparture = (departureTime) => {
   const departure = dayjs(departureTime);
   const diff = departure.diff(now);
   const tripDuration = dayjs.duration(diff);
-
+  
   if (tripDuration.asMinutes() <= 60) {
     return `${Math.floor(tripDuration.asMinutes())} minutos`;
   } else {
@@ -50,7 +50,6 @@ export default function TripsPage() {
         console.error('Error fetching trips:', error);
       }
     };
-
     fetchTrips();
   }, []);
 
@@ -178,4 +177,4 @@ export default function TripsPage() {
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
     </Box>
   );
-}
+} 
