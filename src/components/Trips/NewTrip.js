@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, Switch, FormControlLabel } from '@mui/material';
 import PublishIcon from '@mui/icons-material/Publish';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { submitForm } from '../../utils/submitCarsForm';
+import Autocomplete from '../GoogleMaps/Autocomplete';
+
 
 const NewTrip = ({ open, handleClose, handleSubmit }) => {
   const navigate = useNavigate();
@@ -48,6 +50,11 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handlePlaceSelected = (place, name) => {
+    const location = place.formatted_address || place.name;
+    setFormValues({ ...formValues, [name]: location });
+  };
+
   const handleClickCars = () => {
     navigate('/cars');
   };
@@ -56,13 +63,6 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
     setFormValues({ ...formValues, car: event.target.value });
   };
 
-  const handleSubmitForm = async () => {
-    try {
-      await submitForm(formValues, typeTrip, university, setError, handleClose, handleSubmit);
-    } catch (error) {
-      setError(error);
-    }
-  };
 
   // const formatDateTime = (dateTime) => {
   //   return new Date(dateTime).toISOString();
@@ -167,7 +167,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           sx={{ ml: 4, mt: 2 }}
         />
 
-        <DialogContent>
+        <DialogContent style={{ overflow: 'visible' }}>
           {cars.length === 0 ? (
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body1" color="error" sx={{ mt: 2 }}>
@@ -191,7 +191,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   label="Auto a ofrecer"
                 >
                   {cars.map((car) => (
-                    <MenuItem key={car.id} value={car.id}>
+                    <MenuItem key={car.id} value={car}>
                       {car.brand} {car.model}
                     </MenuItem>
                   ))}
@@ -201,7 +201,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
               
               { typeTrip === 'ida' ?
                 <div>
-                  <TextField
+                  {/* <TextField
                   margin="dense"
                   name="start_location"
                   label="Ubicación de partida (incluir comuna)"
@@ -210,6 +210,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   variant="outlined"
                   value={formValues.start_location}
                   onChange={handleChange}
+                  /> */}
+                  <Autocomplete
+                    name="start_location"
+                    placeholder="Ubicación de partida (incluir comuna)"
+                    value={formValues.start_location}
+                    onChange={handleChange}
+                    label="Ubicación de partida (incluir comuna)"
+                    onPlaceSelected={(place) => handlePlaceSelected(place, 'start_location')}
                   />
                   <FormControl variant="outlined" fullWidth style={{ marginTop: '10px' }}>
                   <InputLabel id="university-label">Universidad Destino</InputLabel>
@@ -221,8 +229,8 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     onChange={(e) => setUniversity(e.target.value)}
                     label="Universidad"
                   >
-                    <MenuItem value="PUC">Universidad Católica</MenuItem>
-                    <MenuItem value="UCH">Universidad de Chile</MenuItem>
+                    <MenuItem value="PUC">Universidad Católica - Campus San Joaquín</MenuItem>
+                    <MenuItem value="UCH">Universidad de Chile - Campus Andrés Bello</MenuItem>
                     <MenuItem value="UANDES">Universidad de los Andes</MenuItem>
                   </Select>
                   </FormControl>
@@ -244,7 +252,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     <MenuItem value="UANDES">Universidad de los Andes</MenuItem>
                   </Select>
                   </FormControl>
-                  <TextField
+                  {/* <TextField
                     margin="dense"
                     name="end_location"
                     label="Ubicación de llegada (incluir comuna)"
@@ -253,6 +261,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     variant="outlined"
                     value={formValues.end_location}
                     onChange={handleChange}
+                  /> */}
+                  <Autocomplete
+                    name="end_location"
+                    placeholder="Ubicación de llegada (incluir comuna)"
+                    value={formValues.end_location}
+                    onChange={handleChange}
+                    label="Ubicación de llegada (incluir comuna)"
+                    onPlaceSelected={(place) => handlePlaceSelected(place, 'end_location')}
                   />
                 </div>
               }

@@ -4,12 +4,15 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextFie
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Cookies from 'js-cookie';
+import AlertBox from '../AlertBox';
 
 const Cars = () => {
   const [cars, setCars] = useState([]);
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentCarIndex, setCurrentCarIndex] = useState(null);
+  const [messageAlert, setMessageAlert] = useState("");
+  const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [newCar, setNewCar] = useState({
     brand: '',
     model: '',
@@ -35,6 +38,8 @@ const Cars = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    console.log(name, value);
+    console.log(newCar);
     setNewCar({ ...newCar, [name]: value });
   };
 
@@ -86,7 +91,17 @@ const Cars = () => {
         }
         handleClose();
       } catch (error) {
-        console.error('Error submitting car:', error);
+        console.error('Error submitting car:', error.response);
+        // if error.response.data.license_plate.length > 0, set error message to error.response.data.license_plate[0]
+        if (error.response && error.response.data.license_plate && error.response.data.license_plate.length > 0) {
+          setMessageAlert(error.response.data.license_plate[0]);
+        } else if (error.response && error.response.data.year && error.response.data.year.length > 0) {
+          setMessageAlert(error.response.data.year[0]);
+        } else {
+          setMessageAlert(error.response ? error.response.data.detail || 'Error al enviar la solicitud. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+        }
+        
+        setOpenErrorAlert(true);
       }
     } else {
       alert('Por favor, rellene todos los campos.');
@@ -226,6 +241,7 @@ const Cars = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <AlertBox openAlert={openErrorAlert} severity="error" setOpenAlert={setOpenErrorAlert} messageAlert={messageAlert} hideDuration={6000} />
     </Box>
   );
 };

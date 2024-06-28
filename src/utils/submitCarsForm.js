@@ -24,6 +24,32 @@ export const submitForm = async (formValues, typeTrip, university, setError, han
     }
 
     if (allFieldsFilled) {
+      if (typeTrip === 'ida' && new Date(formValues.end_date) < new Date()) {
+        setError('La fecha de llegada debe ser mayor a la fecha actual.');
+        return;
+      }
+      if (typeTrip === 'vuelta' && new Date(formValues.start_date) < new Date()) {
+        setError('La fecha de salida debe ser mayor a la fecha actual.');
+        return;
+      }
+      // checkear que la capacidad sea mayor a 0
+      if (formValues.capacity <= 0) {
+        setError('La capacidad del viaje debe ser mayor a 0.');
+        return;
+      }
+
+      // checkear que la capacidad sea menor o igual a la del auto
+      console.log("EL AUTO", formValues.car);
+      if (formValues.capacity > formValues.car.capacity) {
+        setError('La capacidad del viaje no puede ser mayor a la capacidad del auto.');
+        return;
+      }
+
+      // checkear que el precio no sea negativo
+      if (formValues.price < 0) {
+        setError('El precio del viaje no puede ser negativo.');
+        return;
+      }
       try {
         let start_location_final;
         let end_location_final;
@@ -42,8 +68,8 @@ export const submitForm = async (formValues, typeTrip, university, setError, han
         }
 
         const tripData = {
-          driver: 1, // Cambiar cuando haya manejo de usuarios
-          car: formValues.car,
+          driver: formValues.car.owner,
+          car: formValues.car.id,
           start_location: start_location_final,
           end_location: end_location_final,
           start_date: start_date_final ? formatDateTime(formValues.start_date) : null,
@@ -54,6 +80,8 @@ export const submitForm = async (formValues, typeTrip, university, setError, han
           passengers: formValues.passengers, // Add the passengers field
           type_trip: typeTrip
         };
+
+
 
         const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData,
           {
