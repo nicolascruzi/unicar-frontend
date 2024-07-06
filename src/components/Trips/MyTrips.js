@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Divider, Avatar, Fab, Tabs, Tab } from '@mui/material';
+import { Box, Paper, Typography, Divider, Avatar, Fab, Tabs, Tab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { deepPurple, deepOrange } from '@mui/material/colors';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -10,44 +10,19 @@ import axios from 'axios';
 import MapComponent from '../GoogleMaps/MapComponent';
 import NewTrip from './NewTrip';
 import { calculateTimeToDeparture, getRandomColor } from '../../utils/utilsMyTrips';
+import Cookies from 'js-cookie';
 
 // dayjs.extend(duration);
 // dayjs.extend(utc);
 // dayjs.extend(timezone);
-
-// const calculateTimeToDeparture = (departureTime) => {
-//   if (!departureTime) {
-//     return null; // No mostrar si no hay hora de salida
-//   }
-
-//   const now = dayjs();
-//   const departure = dayjs(departureTime);
-//   const diff = departure.diff(now);
-
-//   if (diff <= 0) {
-//     return null; // No mostrar si el tiempo es negativo o cero
-//   }
-
-//   const tripDuration = dayjs.duration(diff);
-
-//   if (tripDuration.asMinutes() <= 60) {
-//     return `${Math.floor(tripDuration.asMinutes())} minutos`;
-//   } else {
-//     return `${Math.floor(tripDuration.asHours())} horas`;
-//   }
-// };
-
-// const getRandomColor = (name) => {
-//   const colors = [deepPurple[500], deepOrange[500]];
-//   const randomIndex = Math.floor(Math.random() * colors.length);
-//   return colors[randomIndex];
-// };
 
 export default function TripsPage() {
   const [open, setOpen] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const [driverTrips, setDriverTrips] = useState([]);
   const [passengerTrips, setPassengerTrips] = useState([]);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ qualification: '', comment: '', trip: '', user_qualified: '' });
 
   useEffect(() => {
     const fetchDriverTrips = async () => {
@@ -80,15 +55,40 @@ export default function TripsPage() {
     setOpen(false);
   };
 
+  const handleReviewOpen = (trip, user_qualified) => {
+    setReviewForm({ ...reviewForm, trip, user_qualified });
+    setReviewOpen(true);
+  };
+
+  const handleReviewClose = () => {
+    setReviewOpen(false);
+  };
+
   const handleSubmit = (formValues) => {
     console.log('Viaje publicado:', formValues);
+  };
+
+  const handleReviewSubmit = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}reviews/create/`, reviewForm, {
+        headers: {
+          'X-CSRFToken': Cookies.get('csrftoken')
+        },
+        withCredentials: true
+      });
+      setReviewOpen(false);
+      // Aquí podrías mostrar una notificación de éxito
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      // Aquí podrías mostrar una notificación de error
+    }
   };
 
   const handleChangeTab = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  const renderTrips = (trips) => (
+  const renderTrips = (trips, isDriver) => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
       {trips.map((trip, index) => {
         const seatsAvailable = trip.capacity - trip.passengers.length;
@@ -147,9 +147,15 @@ export default function TripsPage() {
                     </Avatar>
                     <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
                     <Typography variant="body2" align="center">{passenger.surname}</Typography>
+                    {isDriver && (
+                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)}>Calificar Pasajero</Button>
+                    )}
                   </Box>
                 ))}
               </Box>
+              {!isDriver && (
+                <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)}>Calificar Conductor</Button>
+              )}
               <Box sx={{ display: 'flex', alignItems: 'center', color: showIcon ? 'green' : 'red' }} gutterBottom>
                 {showIcon && <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />}
                 {timeToDeparture && (
@@ -190,8 +196,8 @@ export default function TripsPage() {
 
       {/* Contenido de las Pestañas */}
       <Box>
-        {tabIndex === 0 && renderTrips(driverTrips)}
-        {tabIndex === 1 && renderTrips(passengerTrips)}
+        {tabIndex === 0 && renderTrips(driverTrips, true)}
+        {tabIndex === 1 && renderTrips(passengerTrips, false)}
       </Box>
 
       {/* Botón flotante */}
@@ -201,6 +207,42 @@ export default function TripsPage() {
 
       {/* Diálogo de creación de viaje */}
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
+
+      {/* Diálogo de creación de reseña */}
+      <Dialog open={reviewOpen} onClose={handleReviewClose}>
+        <DialogTitle>Crear Reseña</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="qualification"
+            label="Calificación"
+            type="number"
+            fullWidth
+            value={reviewForm.qualification}
+            onChange={(e) => setReviewForm({ ...reviewForm, qualification: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            id="comment"
+            label="Comentario"
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            value={reviewForm.comment}
+            onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleReviewClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleReviewSubmit} color="primary">
+            Enviar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
