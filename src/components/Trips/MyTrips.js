@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Divider, Avatar, Fab, Tabs, Tab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import { deepPurple, deepOrange } from '@mui/material/colors';
+import { Box, Paper, Typography, Divider, Avatar, Fab, Tabs, Tab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Rating } from '@mui/material';
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 import SensorsIcon from '@mui/icons-material/Sensors';
 import axios from 'axios';
 import MapComponent from '../GoogleMaps/MapComponent';
 import NewTrip from './NewTrip';
 import { calculateTimeToDeparture, getRandomColor } from '../../utils/utilsMyTrips';
 import Cookies from 'js-cookie';
-
-// dayjs.extend(duration);
-// dayjs.extend(utc);
-// dayjs.extend(timezone);
 
 export default function TripsPage() {
   const [open, setOpen] = useState(false);
@@ -23,6 +15,7 @@ export default function TripsPage() {
   const [passengerTrips, setPassengerTrips] = useState([]);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewForm, setReviewForm] = useState({ qualification: '', comment: '', trip: '', user_qualified: '' });
+  const [reviewExists, setReviewExists] = useState(false);
 
   useEffect(() => {
     const fetchDriverTrips = async () => {
@@ -55,9 +48,20 @@ export default function TripsPage() {
     setOpen(false);
   };
 
-  const handleReviewOpen = (trip, user_qualified) => {
-    setReviewForm({ ...reviewForm, trip, user_qualified });
-    setReviewOpen(true);
+  const handleReviewOpen = async (trip, user_qualified) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}reviews/check/${trip}/${user_qualified}/${Cookies.get('user_id')}/`);
+      setReviewExists(response.data.review_exists);
+
+      if (!response.data.review_exists) {
+        setReviewForm({ ...reviewForm, trip, user_qualified });
+        setReviewOpen(true);
+      } else {
+        alert('Ya has calificado a este usuario para este viaje.');
+      }
+    } catch (error) {
+      console.error('Error checking review existence:', error);
+    }
   };
 
   const handleReviewClose = () => {
@@ -77,10 +81,8 @@ export default function TripsPage() {
         withCredentials: true
       });
       setReviewOpen(false);
-      // Aquí podrías mostrar una notificación de éxito
     } catch (error) {
       console.error('Error submitting review:', error);
-      // Aquí podrías mostrar una notificación de error
     }
   };
 
@@ -96,7 +98,6 @@ export default function TripsPage() {
         const endDate = trip.end_date ? dayjs(trip.end_date).format('DD/MM/YYYY HH:mm') : null;
         const timeToDeparture = startDate ? calculateTimeToDeparture(trip.start_date) : null;
         const timeToArrival = endDate ? calculateTimeToDeparture(trip.end_date) : null;
-
         const showIcon = timeToDeparture || timeToArrival;
 
         return (
@@ -108,6 +109,11 @@ export default function TripsPage() {
               <Typography variant="h5" align="center" gutterBottom marginBottom={3}>
                 Viaje de {trip.driver.name}
               </Typography>
+              {!isDriver && (
+                <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)} disabled={reviewExists}>
+                  Calificar Conductor
+                </Button>
+              )}
               <Typography variant="body1" gutterBottom>
                 <strong>Auto:</strong> {trip.car.brand} {trip.car.model}
               </Typography>
@@ -148,14 +154,11 @@ export default function TripsPage() {
                     <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
                     <Typography variant="body2" align="center">{passenger.surname}</Typography>
                     {isDriver && (
-                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)}>Calificar Pasajero</Button>
+                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)} disabled={reviewExists}>Calificar Pasajero</Button>
                     )}
                   </Box>
                 ))}
               </Box>
-              {!isDriver && (
-                <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)}>Calificar Conductor</Button>
-              )}
               <Box sx={{ display: 'flex', alignItems: 'center', color: showIcon ? 'green' : 'red' }} gutterBottom>
                 {showIcon && <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />}
                 {timeToDeparture && (
@@ -188,39 +191,29 @@ export default function TripsPage() {
       </Typography>
       <Divider sx={{ marginBottom: 5 }}></Divider>
 
-      {/* Pestañas */}
       <Tabs value={tabIndex} onChange={handleChangeTab} aria-label="trip tabs">
         <Tab label="COMO CONDUCTOR" />
         <Tab label="COMO PASAJERO" />
       </Tabs>
 
-      {/* Contenido de las Pestañas */}
       <Box>
         {tabIndex === 0 && renderTrips(driverTrips, true)}
         {tabIndex === 1 && renderTrips(passengerTrips, false)}
       </Box>
 
-      {/* Botón flotante */}
       <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 40, right: 40, backgroundColor: 'green', padding: 7 }} onClick={handleOpen}>
         CREAR VIAJE
       </Fab>
 
-      {/* Diálogo de creación de viaje */}
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
 
-      {/* Diálogo de creación de reseña */}
       <Dialog open={reviewOpen} onClose={handleReviewClose}>
         <DialogTitle>Crear Reseña</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="qualification"
-            label="Calificación"
-            type="number"
-            fullWidth
-            value={reviewForm.qualification}
-            onChange={(e) => setReviewForm({ ...reviewForm, qualification: e.target.value })}
+          <Rating
+            name="qualification"
+            value={Number(reviewForm.qualification)}
+            onChange={(event, newValue) => setReviewForm({ ...reviewForm, qualification: newValue })}
           />
           <TextField
             margin="dense"
