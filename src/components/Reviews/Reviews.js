@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Avatar, Divider, IconButton, Tab, Tabs } from '@mui/material';
 import Rating from '@mui/material/Rating';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import axios from 'axios';
 
 const Reviews = () => {
@@ -68,14 +66,6 @@ const Reviews = () => {
               <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
                 {review.comment}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                <IconButton color="primary">
-                  <ThumbUpIcon />
-                </IconButton>
-                <IconButton color="secondary">
-                  <ThumbDownIcon />
-                </IconButton>
-              </Box>
             </Paper>
           ))}
         </Box>
@@ -97,14 +87,6 @@ const Reviews = () => {
               <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
                 {review.comment}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                <IconButton color="primary">
-                  <ThumbUpIcon />
-                </IconButton>
-                <IconButton color="secondary">
-                  <ThumbDownIcon />
-                </IconButton>
-              </Box>
             </Paper>
           ))}
         </Box>
