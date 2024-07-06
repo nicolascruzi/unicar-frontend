@@ -38,6 +38,7 @@ export default function TripsPage() {
   const [open, setOpen] = useState(false);
   const [trips, setTrips] = useState([]);
   const [askToJoin, setAskToJoin] = useState(false);
+  const [selectedTripId, setSelectedTripId] = useState(null);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -62,12 +63,13 @@ export default function TripsPage() {
   };
 
   const handleAskToJoin = (tripId) => {
+    setSelectedTripId(tripId);  // Actualiza el trip_id seleccionado
     setAskToJoin(true);
-    handleJoinRequest();
   };
 
   const handleCloseAskToJoin = () => {
     setAskToJoin(false);
+    setSelectedTripId(null);  // Reinicia el trip_id seleccionado
   };
 
   const handleSubmit = (formValues) => {
@@ -76,12 +78,12 @@ export default function TripsPage() {
 
   const handleSubmitAsk = (formValues) => {
     console.log(' Solicitud enviada:', formValues);
-  }
+  };
 
   const handleJoinRequest = async () => {
     try {
       console.log(askToJoin);
-      // const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/${tripId}/join/`);
+      // const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/${selectedTripId}/join/`);
       // console.log('Solicitud enviada:', response.data);
       // Aquí puedes agregar código para actualizar la interfaz de usuario, si es necesario.
     } catch (error) {
@@ -156,11 +158,12 @@ export default function TripsPage() {
                   <Button
                     variant="contained"
                     sx={{ backgroundColor: '#0a0a2a', '&:hover': { backgroundColor: '#00001e' } }}
-                    onClick={()=> handleAskToJoin(trip.id)}>
+                    onClick={() => handleAskToJoin(trip.id)}
+                    disabled={trip.user_has_asked}>
                     Solicitar unirme
                   </Button>
-                  {/* Aca se envia la solicitud para unirse */}
-                  <NewRequest trip_id={trip.id} open={askToJoin} handleClose={handleCloseAskToJoin} handleSubmit={handleSubmitAsk}></NewRequest>
+                  {/* Aquí se envía la solicitud para unirse */}
+                  <NewRequest trip_id={selectedTripId} open={askToJoin} handleClose={handleCloseAskToJoin} handleSubmit={handleSubmitAsk}></NewRequest>
                 </Box>
               </Box>
             </Paper>
