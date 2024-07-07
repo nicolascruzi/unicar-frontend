@@ -46,7 +46,8 @@ export default function TripsPage() {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/upcoming/`, {
           withCredentials: true,
         });
-        setTrips(response.data);
+        const filteredTrips = response.data.filter(trip => trip.completed === false);
+        setTrips(filteredTrips);
       } catch (error) {
         console.error('Error fetching trips:', error);
       }
