@@ -194,9 +194,6 @@ export default function UpcomingTrips() {
                     </Avatar>
                     <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
                     <Typography variant="body2" align="center">{passenger.surname}</Typography>
-                    {isDriver && (
-                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)} disabled={reviewExists}>Calificar</Button>
-                    )}
                   </Box>
                 ))}
               </Box>
@@ -229,11 +226,6 @@ export default function UpcomingTrips() {
                 )}
                 
               </Box>
-              {!isDriver && (
-                    <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)} disabled={reviewExists}>
-                    Calificar Conductor
-                    </Button>
-                )}
               {isDriver && trip.in_progress && (
                 <Button
                     variant="contained"
