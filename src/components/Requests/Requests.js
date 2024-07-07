@@ -93,7 +93,6 @@ const Requests = () => {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks/`, {
           withCredentials: true,
         });
-        console.log(response.data);
         setIncomingAsks(response.data);
 
         const response_two = await axios.get(`${process.env.REACT_APP_API_URL}asks/get_asks_outgoing/`, {
@@ -184,7 +183,7 @@ const Requests = () => {
                   <TableRow key={request.id}>
                     <TableCell>{request.nombre}</TableCell>
                     <TableCell>{request.ubicacionRecogida}</TableCell>
-                    <TableCell>{request.calificacion}</TableCell>
+                    <TableCell>{request.calificacion ? request.calificacion : 'N/A'}</TableCell>
                     <TableCell>{request.genero}</TableCell>
                     <TableCell>{request.universidad}</TableCell>
                     <TableCell>
