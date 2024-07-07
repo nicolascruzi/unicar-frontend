@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import AlertBox from '../AlertBox';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { checkFields, checkPassword, checkEmail } from '../../utils/signUpUtils';
 
 export default function SignUpForm() {
   const navigate = useNavigate();
@@ -17,35 +18,38 @@ export default function SignUpForm() {
   const [messageAlert, setMessageAlert] = useState("");
   const [openSuccessAlert, setOpenSuccessrAlert] = useState(false);
 
-  const checkPasswords = () => {
-    if (password === verifyPassword) {
-      return true;
-    }
-    setMessageAlert("Las contraseñas no coinciden");
-    setOpenErrorAlert(true);
-    return false;
-  }
+  // const checkPasswords = () => {
+  //   if (password === verifyPassword) {
+  //     return true;
+  //   }
+  //   setMessageAlert("Las contraseñas no coinciden");
+  //   setOpenErrorAlert(true);
+  //   return false;
+  // }
 
-  const checkFields = () => {
-    if (name && email && password && verifyPassword && university && gender) {
-      return true;
-    }
-    setMessageAlert("Por favor, complete todos los campos");
-    setOpenErrorAlert(true);
-    return false;
-  }
+  // const checkFields = () => {
+  //   if (name && email && password && verifyPassword && university && gender) {
+  //     return true;
+  //   }
+  //   setMessageAlert("Por favor, complete todos los campos");
+  //   setOpenErrorAlert(true);
+  //   return false;
+  // }
 
-  const checkEmail = () => {
-    if (email.includes('@')) {
-      return true;
-    }
-    setMessageAlert("Por favor, ingrese un email válido");
-    setOpenErrorAlert(true);
-    return false;
-  }
+  // const checkEmail = () => {
+  //   if (email.includes('@')) {
+  //     return true;
+  //   }
+  //   setMessageAlert("Por favor, ingrese un email válido");
+  //   setOpenErrorAlert(true);
+  //   return false;
+  // }
 
   const handleSignUp = () => {
-    if (checkFields() && checkPasswords() && checkEmail()) {
+    const isPasswordValid = checkPassword(password, verifyPassword, setMessageAlert, setOpenErrorAlert);
+    const areFieldsValid = checkFields(name, email, password, verifyPassword, university, gender, setMessageAlert, setOpenErrorAlert);
+    const isEmailValid = checkEmail(email, setMessageAlert, setOpenErrorAlert);
+    if (isPasswordValid && areFieldsValid && isEmailValid) {
       axios.post(process.env.REACT_APP_API_URL + 'register/', {
         "name": name,
         "email": email,

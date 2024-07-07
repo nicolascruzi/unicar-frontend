@@ -11,11 +11,13 @@ import MyTrips from './components/Trips/MyTrips';
 import Profile from './components/Profile/Profile';
 import SearchTrips from './components/Trips/SearchTrips';
 import Reviews from './components/Reviews/Reviews';
+import UpcomingTrips from './components/Trips/UpcomingTrips';
 
 import Cookies from 'js-cookie';
 import PrivateRoute from './utils/PrivateRoute';
 
 import Cars from './components/Cars/Cars';
+import { Upcoming } from '@mui/icons-material';
 
 
 function App() {
@@ -43,6 +45,7 @@ function HomeLayout() {
     <>
       <Navbar />
       <Routes>
+        <Route path="upcoming_trips" element={<UpcomingTrips />} />
         <Route path="trips" element={<TripsPage />} />
         <Route path="requests" element={<Requests />} />
         <Route path="history" element={<MyTrips />} />

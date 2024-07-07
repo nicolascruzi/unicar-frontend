@@ -47,8 +47,11 @@ const Navbar = () => {
           Unicar
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'right' }}>
+          <StyledButton color="inherit" component={Link} to="/upcoming_trips" active={location.pathname === '/upcoming_trips'}>
+            Próximos viajes
+          </StyledButton>
           <StyledButton color="inherit" component={Link} to="/trips" active={location.pathname === '/trips'}>
-            Viajes disponibles
+            Buscar Viajes
           </StyledButton>
           <StyledButton color="inherit" component={Link} to="/requests" active={location.pathname === '/requests'}>
             Solicitudes
@@ -57,7 +60,7 @@ const Navbar = () => {
             Autos
           </StyledButton>
           <StyledButton color="inherit" component={Link} to="/history" active={location.pathname === '/history'}>
-            Mis viajes
+            Historial
           </StyledButton>
           <StyledButton color="inherit" component={Link} to="/reviews" active={location.pathname === '/reviews'}>
             Reseñas

@@ -92,10 +92,10 @@ const RequestDetailsDialog = ({ request, open, onClose}) => {
           </Typography>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'center', padding: '20px 40px 30px' }}>
-          <Button variant="contained" onClick={handleApproveRequest} style={{ backgroundColor: '#4caf50', borderRadius: '50%', padding: '20px' }}>
+          <Button variant="contained" onClick={handleApproveRequest} style={{ backgroundColor: '#4caf50', borderRadius: '50%', padding: '20px' }} aria-label="Approve Button">
             <CheckIcon style={{ fontSize: '2rem' }} />
           </Button>
-          <Button variant="contained" onClick={handleRejectRequest} style={{ backgroundColor: '#f44336', borderRadius: '50%', padding: '20px' }}>
+          <Button variant="contained" onClick={handleRejectRequest} style={{ backgroundColor: '#f44336', borderRadius: '50%', padding: '20px' }} aria-label="Reject Button">
             <ClearIcon style={{ fontSize: '2rem' }} />
           </Button>
         </DialogActions>

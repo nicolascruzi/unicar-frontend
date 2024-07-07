@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, Switch, FormControlLabel } from '@mui/material';
 import PublishIcon from '@mui/icons-material/Publish';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { submitForm } from '../../utils/submitCarsForm';
+import Autocomplete from '../GoogleMaps/Autocomplete';
+
 
 const NewTrip = ({ open, handleClose, handleSubmit }) => {
   const navigate = useNavigate();
@@ -47,6 +50,11 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handlePlaceSelected = (place, name) => {
+    const location = place.formatted_address || place.name;
+    setFormValues({ ...formValues, [name]: location });
+  };
+
   const handleClickCars = () => {
     navigate('/cars');
   };
@@ -55,78 +63,81 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
     setFormValues({ ...formValues, car: event.target.value });
   };
 
-  const formatDateTime = (dateTime) => {
-    return new Date(dateTime).toISOString();
-  };
 
-  const submitForm = async () => {
-    if (!formValues.car) {
-      setError('Debe seleccionar un auto para crear el viaje.');
-      return;
-    }
+  // const formatDateTime = (dateTime) => {
+  //   return new Date(dateTime).toISOString();
+  // };
 
-    let allFieldsFilled;
-    if (typeTrip === 'ida') {
-      // only required fields for ida
-      allFieldsFilled = formValues.car && formValues.start_location && university && formValues.end_date && formValues.capacity && formValues.price;
-    } else if (typeTrip === 'vuelta') {
-      // only required fields for vuelta
-      allFieldsFilled = formValues.car && formValues.end_location && university && formValues.start_date && formValues.capacity && formValues.price;
-    } else {
-      allFieldsFilled = false;
-    }
+  
 
-    if (allFieldsFilled) {
-      try {
-        let start_location_final;
-        let end_location_final;
-        let start_date_final;
-        let end_date_final;
-        if (typeTrip === 'vuelta') {
-          start_location_final = university;
-          end_location_final = formValues.end_location; // Set the end location to the university if the trip is vuelta
-          start_date_final = formValues.start_date;
-          end_date_final = null;
-        } else {
-          start_location_final = formValues.start_location; // Set the start location to the university if the trip is ida
-          end_location_final = university;
-          start_date_final = null;
-          end_date_final = formValues.end_date;
-        }
+  // const submitForm = async () => {
+  //   if (!formValues.car) {
+  //     setError('Debe seleccionar un auto para crear el viaje.');
+  //     return;
+  //   }
 
-        const tripData = {
-          driver: 1, // Cambiar cuando haya manejo de usuarios
-          car: formValues.car,
-          start_location: start_location_final,
-          end_location: end_location_final,
-          start_date: start_date_final ? formatDateTime(formValues.start_date) : null,
-          end_date: end_date_final ? formatDateTime(formValues.end_date) : null,
-          capacity: formValues.capacity,
-          price: formValues.price,
-          in_progress: false,
-          passengers: formValues.passengers, // Add the passengers field
-          type_trip: typeTrip
-        };
+  //   let allFieldsFilled;
+  //   if (typeTrip === 'ida') {
+  //     // only required fields for ida
+  //     allFieldsFilled = formValues.car && formValues.start_location && university && formValues.end_date && formValues.capacity && formValues.price;
+  //   } else if (typeTrip === 'vuelta') {
+  //     // only required fields for vuelta
+  //     allFieldsFilled = formValues.car && formValues.end_location && university && formValues.start_date && formValues.capacity && formValues.price;
+  //   } else {
+  //     allFieldsFilled = false;
+  //   }
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData,
-          {
-            headers: {
-              'X-CSRFToken': Cookies.get('csrftoken')
-            },
-            withCredentials: true
-          }
-        );
-        console.log('Success:', response.data);
-        handleClose();
-        handleSubmit(formValues); // Update parent state if needed
-      } catch (error) {
-        console.error('Error submitting trip:', error.response ? error.response.data : error.message);
-        setError(error.response ? error.response.data.detail || 'Error al publicar el viaje. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
-      }
-    } else {
-      alert('Por favor, rellene todos los campos.');
-    }
-  };
+  //   if (allFieldsFilled) {
+  //     try {
+  //       let start_location_final;
+  //       let end_location_final;
+  //       let start_date_final;
+  //       let end_date_final;
+  //       if (typeTrip === 'vuelta') {
+  //         start_location_final = university;
+  //         end_location_final = formValues.end_location; // Set the end location to the university if the trip is vuelta
+  //         start_date_final = formValues.start_date;
+  //         end_date_final = null;
+  //       } else {
+  //         start_location_final = formValues.start_location; // Set the start location to the university if the trip is ida
+  //         end_location_final = university;
+  //         start_date_final = null;
+  //         end_date_final = formValues.end_date;
+  //       }
+
+  //       const tripData = {
+  //         driver: 1, // Cambiar cuando haya manejo de usuarios
+  //         car: formValues.car,
+  //         start_location: start_location_final,
+  //         end_location: end_location_final,
+  //         start_date: start_date_final ? formatDateTime(formValues.start_date) : null,
+  //         end_date: end_date_final ? formatDateTime(formValues.end_date) : null,
+  //         capacity: formValues.capacity,
+  //         price: formValues.price,
+  //         in_progress: false,
+  //         passengers: formValues.passengers, // Add the passengers field
+  //         type_trip: typeTrip
+  //       };
+
+  //       const response = await axios.post(`${process.env.REACT_APP_API_URL}trips/create/`, tripData,
+  //         {
+  //           headers: {
+  //             'X-CSRFToken': Cookies.get('csrftoken')
+  //           },
+  //           withCredentials: true
+  //         }
+  //       );
+  //       console.log('Success:', response.data);
+  //       handleClose();
+  //       handleSubmit(formValues); // Update parent state if needed
+  //     } catch (error) {
+  //       console.error('Error submitting trip:', error.response ? error.response.data : error.message);
+  //       setError(error.response ? error.response.data.detail || 'Error al publicar el viaje. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+  //     }
+  //   } else {
+  //     alert('Por favor, rellene todos los campos.');
+  //   }
+  // };
 
   const toggleTripType = () => {
     setTypeTrip(typeTrip === 'ida' ? 'vuelta' : 'ida'); // Toggle between ida and vuelta
@@ -156,7 +167,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
           sx={{ ml: 4, mt: 2 }}
         />
 
-        <DialogContent>
+        <DialogContent style={{ overflow: 'visible' }}>
           {cars.length === 0 ? (
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body1" color="error" sx={{ mt: 2 }}>
@@ -173,13 +184,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                 <Select
                   labelId="auto-select-label"
                   id="auto-select"
+                  data-testid="auto-select"
                   name="car"
                   value={formValues.car}
                   onChange={handleAutoChange}
                   label="Auto a ofrecer"
                 >
                   {cars.map((car) => (
-                    <MenuItem key={car.id} value={car.id}>
+                    <MenuItem key={car.id} value={car}>
                       {car.brand} {car.model}
                     </MenuItem>
                   ))}
@@ -189,7 +201,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
               
               { typeTrip === 'ida' ?
                 <div>
-                  <TextField
+                  {/* <TextField
                   margin="dense"
                   name="start_location"
                   label="Ubicación de partida (incluir comuna)"
@@ -198,6 +210,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                   variant="outlined"
                   value={formValues.start_location}
                   onChange={handleChange}
+                  /> */}
+                  <Autocomplete
+                    name="start_location"
+                    placeholder="Ubicación de partida (incluir comuna)"
+                    value={formValues.start_location}
+                    onChange={handleChange}
+                    label="Ubicación de partida (incluir comuna)"
+                    onPlaceSelected={(place) => handlePlaceSelected(place, 'start_location')}
                   />
                   <FormControl variant="outlined" fullWidth style={{ marginTop: '10px' }}>
                   <InputLabel id="university-label">Universidad Destino</InputLabel>
@@ -209,8 +229,8 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     onChange={(e) => setUniversity(e.target.value)}
                     label="Universidad"
                   >
-                    <MenuItem value="PUC">Universidad Católica</MenuItem>
-                    <MenuItem value="UCH">Universidad de Chile</MenuItem>
+                    <MenuItem value="PUC">Universidad Católica - Campus San Joaquín</MenuItem>
+                    <MenuItem value="UCH">Universidad de Chile - Campus Andrés Bello</MenuItem>
                     <MenuItem value="UANDES">Universidad de los Andes</MenuItem>
                   </Select>
                   </FormControl>
@@ -227,12 +247,12 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     onChange={(e) => setUniversity(e.target.value)}
                     label="Universidad"
                   >
-                    <MenuItem value="PUC">Universidad Católica</MenuItem>
-                    <MenuItem value="UCH">Universidad de Chile</MenuItem>
+                    <MenuItem value="PUC">Universidad Católica - Campus San Joaquín</MenuItem>
+                    <MenuItem value="UCH">Universidad de Chile - Campus Andrés Bello</MenuItem>
                     <MenuItem value="UANDES">Universidad de los Andes</MenuItem>
                   </Select>
                   </FormControl>
-                  <TextField
+                  {/* <TextField
                     margin="dense"
                     name="end_location"
                     label="Ubicación de llegada (incluir comuna)"
@@ -241,6 +261,14 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     variant="outlined"
                     value={formValues.end_location}
                     onChange={handleChange}
+                  /> */}
+                  <Autocomplete
+                    name="end_location"
+                    placeholder="Ubicación de llegada (incluir comuna)"
+                    value={formValues.end_location}
+                    onChange={handleChange}
+                    label="Ubicación de llegada (incluir comuna)"
+                    onPlaceSelected={(place) => handlePlaceSelected(place, 'end_location')}
                   />
                 </div>
               }
@@ -308,7 +336,7 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
             Cancelar
           </Button>
           {cars.length > 0 && (
-            <Button onClick={submitForm} color="primary">
+            <Button onClick={() => submitForm(formValues, typeTrip, university, setError, handleClose, handleSubmit)} color="primary">
               Publicar viaje
             </Button>
           )}

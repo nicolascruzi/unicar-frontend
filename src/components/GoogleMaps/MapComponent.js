@@ -55,10 +55,10 @@ import React, { useEffect, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 
 // Initialize the Loader once
-const loader = new Loader({
+export const loader = new Loader({
   apiKey: process.env.REACT_APP_GOOGLE_CLOUD_API_KEY,
   version: 'weekly',
-  libraries: ['geometry'],
+  libraries: ['geometry', 'places'],
 });
 
 const MapComponent = ({ encodedPolyline }) => {
