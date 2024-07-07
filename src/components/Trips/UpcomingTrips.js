@@ -8,7 +8,7 @@ import NewTrip from './NewTrip';
 import { calculateTimeToDeparture, getRandomColor } from '../../utils/utilsMyTrips';
 import Cookies from 'js-cookie';
 
-export default function TripsPage() {
+export default function UpcomingTrips() {
   const [open, setOpen] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const [driverTrips, setDriverTrips] = useState([]);
@@ -18,29 +18,72 @@ export default function TripsPage() {
   const [reviewExists, setReviewExists] = useState(false);
 
   useEffect(() => {
-    const fetchDriverTrips = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/driver/`);
-        const completedTrips = response.data.filter(trip => trip.completed === true);
-        setDriverTrips(completedTrips);
-      } catch (error) {
-        console.error('Error fetching driver trips:', error);
-      }
-    };
-
-    const fetchPassengerTrips = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/passenger/`);
-        const completedTrips = response.data.filter(trip => trip.completed === true);
-        setPassengerTrips(completedTrips);
-      } catch (error) {
-        console.error('Error fetching passenger trips:', error);
-      }
-    };
 
     fetchDriverTrips();
     fetchPassengerTrips();
   }, []);
+
+  const fetchDriverTrips = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/driver/`);
+      const completedTrips = response.data.filter(trip => trip.completed === false);
+      setDriverTrips(completedTrips);
+    } catch (error) {
+      console.error('Error fetching driver trips:', error);
+    }
+  };
+
+  const fetchPassengerTrips = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/passenger/`);
+      const completedTrips = response.data.filter(trip => trip.completed === false);
+      setPassengerTrips(completedTrips);
+    } catch (error) {
+      console.error('Error fetching passenger trips:', error);
+    }
+  };
+
+  const handleStartTrip = async (tripId) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}trips/${tripId}/start/`,
+        {},
+        {
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken')
+          },
+          withCredentials: true
+        }
+      );
+      console.log('Viaje iniciado:', response.data);
+      fetchDriverTrips(); 
+      fetchPassengerTrips();
+     
+    } catch (error) {
+      console.error('Error al iniciar el viaje:', error);
+    }
+  };
+  
+  const handleFinishTrip = async (tripId) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}trips/${tripId}/end/`,
+        {},
+        {
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken')
+          },
+          withCredentials: true
+        }
+      );
+      fetchDriverTrips(); 
+      fetchPassengerTrips();
+      console.log('Viaje finalizado:', response.data);
+      // Aquí podrías actualizar el estado de tus viajes si es necesario
+    } catch (error) {
+      console.error('Error al finalizar el viaje:', error);
+    }
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -111,11 +154,7 @@ export default function TripsPage() {
               <Typography variant="h5" align="center" gutterBottom marginBottom={3}>
                 Viaje de {trip.driver.name}
               </Typography>
-              {!isDriver && (
-                <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)} disabled={reviewExists}>
-                  Calificar Conductor
-                </Button>
-              )}
+             
               <Typography variant="body1" gutterBottom>
                 <strong>Auto:</strong> {trip.car.brand} {trip.car.model}
               </Typography>
@@ -156,11 +195,65 @@ export default function TripsPage() {
                     <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
                     <Typography variant="body2" align="center">{passenger.surname}</Typography>
                     {isDriver && (
-                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)} disabled={reviewExists}>Calificar Pasajero</Button>
+                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)} disabled={reviewExists}>Calificar</Button>
                     )}
                   </Box>
                 ))}
-              </Box> 
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', color: showIcon ? 'green' : 'red' }} gutterBottom>
+    
+              {timeToDeparture && !trip.in_progress && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />
+                    <Typography variant="body1" gutterBottom>
+                        {timeToDeparture ? `Viaje sale en ${timeToDeparture}` : null}
+                    </Typography>
+                </Box>
+                )}
+                {trip.in_progress && (
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />
+                        <Typography variant="body1" gutterBottom>
+                            Viaje en curso
+                        </Typography>
+                    </Box>
+                )}
+                {timeToArrival && !trip.in_progress && (
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <SensorsIcon sx={{ fontSize: '2em', marginRight: '4px' }} />
+                        <Typography variant="body1" gutterBottom>
+                            {timeToArrival ? `Viaje finaliza en ${timeToArrival}` : null}
+                        </Typography>
+                    </Box>
+                )}
+                
+              </Box>
+              {!isDriver && (
+                    <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)} disabled={reviewExists}>
+                    Calificar Conductor
+                    </Button>
+                )}
+              {isDriver && trip.in_progress && (
+                <Button
+                    variant="contained"
+                    sx={{ bgcolor: 'red', color: 'white' }} 
+                    onClick={() => handleFinishTrip(trip.id)}
+                    fullWidth
+                >
+                    Finalizar Viaje
+                </Button>
+                )}
+                {isDriver && !trip.in_progress && (
+                <Button
+                    variant="contained"
+                    sx={{ bgcolor: 'green', color: 'white' }} 
+                    onClick={() => handleStartTrip(trip.id)}
+                    fullWidth
+                >
+                    Iniciar Viaje
+                </Button>
+                )}
             </Box>
           </Paper>
         );
@@ -171,7 +264,7 @@ export default function TripsPage() {
   return (
     <Box sx={{ p: 8 }}>
       <Typography variant="h4" gutterBottom>
-        Historial de Viajes
+        Próximos Viajes
       </Typography>
       <Divider sx={{ marginBottom: 5 }}></Divider>
 
