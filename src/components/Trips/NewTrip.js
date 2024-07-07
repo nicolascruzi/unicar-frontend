@@ -247,8 +247,8 @@ const NewTrip = ({ open, handleClose, handleSubmit }) => {
                     onChange={(e) => setUniversity(e.target.value)}
                     label="Universidad"
                   >
-                    <MenuItem value="PUC">Universidad Católica</MenuItem>
-                    <MenuItem value="UCH">Universidad de Chile</MenuItem>
+                    <MenuItem value="PUC">Universidad Católica - Campus San Joaquín</MenuItem>
+                    <MenuItem value="UCH">Universidad de Chile - Campus Andrés Bello</MenuItem>
                     <MenuItem value="UANDES">Universidad de los Andes</MenuItem>
                   </Select>
                   </FormControl>

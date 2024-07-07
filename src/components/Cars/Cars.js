@@ -38,8 +38,6 @@ const Cars = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    console.log(name, value);
-    console.log(newCar);
     setNewCar({ ...newCar, [name]: value });
   };
 
@@ -59,52 +57,76 @@ const Cars = () => {
     });
   };
 
+  const validateForm = () => {
+    const { year, capacity, license_plate } = newCar;
+    const currentYear = new Date().getFullYear();
+    const yearInt = parseInt(year, 10);
+    const capacityInt = parseInt(capacity, 10);
+
+    if (isNaN(yearInt) || yearInt < 1900 || yearInt > currentYear) {
+      setMessageAlert(`El año debe ser un número entre 1900 y ${currentYear}.`);
+      return false;
+    }
+
+    if (isNaN(capacityInt) || capacityInt <= 0 || capacityInt > 50) {
+      setMessageAlert('La capacidad debe ser un número mayor a 0 y menor o igual a 50.');
+      return false;
+    }
+
+    const licensePlatePattern = /^([A-Z]{2}[0-9]{4}|[A-Z]{4}[0-9]{2})$/;
+    if (!license_plate.match(licensePlatePattern)) {
+      setMessageAlert('La patente debe tener el formato AA0000 o AAAA00.');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
-    const { brand, model, year, license_plate, capacity } = newCar;
-    if (brand && model && year && license_plate && capacity) {
-      try {
-        if (isEditing) {
-          const updatedCar = await axios.put(`${process.env.REACT_APP_API_URL}cars/edit_car/${cars[currentCarIndex].id}/`, newCar,
-            {
+    if (validateForm()) {
+      const { brand, model, year, license_plate, capacity } = newCar;
+      if (brand && model && year && license_plate && capacity) {
+        try {
+          if (isEditing) {
+            const updatedCar = await axios.put(`${process.env.REACT_APP_API_URL}cars/edit_car/${cars[currentCarIndex].id}/`, newCar, {
               headers: {
                 'X-CSRFToken': Cookies.get('csrftoken')
               },
               withCredentials: true
-            }
-          );
+            });
 
-          const updatedCars = cars.map((car, index) => 
-            index === currentCarIndex ? updatedCar.data : car
-          );
-          setCars(updatedCars);
-        } else {
-          const createdCar = await axios.post(`${process.env.REACT_APP_API_URL}cars/create_car/`, newCar,
-            {
+            const updatedCars = cars.map((car, index) =>
+              index === currentCarIndex ? updatedCar.data : car
+            );
+            setCars(updatedCars);
+          } else {
+            const createdCar = await axios.post(`${process.env.REACT_APP_API_URL}cars/create_car/`, newCar, {
               headers: {
                 'X-CSRFToken': Cookies.get('csrftoken')
               },
               withCredentials: true
-            }
-          );
+            });
 
-          setCars([...cars, createdCar.data]);
+            setCars([...cars, createdCar.data]);
+          }
+          handleClose();
+        } catch (error) {
+          console.error('Error submitting car:', error.response);
+          if (error.response && error.response.data.license_plate && error.response.data.license_plate.length > 0) {
+            setMessageAlert(error.response.data.license_plate[0]);
+          } else if (error.response && error.response.data.year && error.response.data.year.length > 0) {
+            setMessageAlert(error.response.data.year[0]);
+          } else {
+            setMessageAlert(error.response ? error.response.data.detail || 'Error al enviar la solicitud. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
+          }
+          setOpenErrorAlert(true);
         }
-        handleClose();
-      } catch (error) {
-        console.error('Error submitting car:', error.response);
-        // if error.response.data.license_plate.length > 0, set error message to error.response.data.license_plate[0]
-        if (error.response && error.response.data.license_plate && error.response.data.license_plate.length > 0) {
-          setMessageAlert(error.response.data.license_plate[0]);
-        } else if (error.response && error.response.data.year && error.response.data.year.length > 0) {
-          setMessageAlert(error.response.data.year[0]);
-        } else {
-          setMessageAlert(error.response ? error.response.data.detail || 'Error al enviar la solicitud. Intente nuevamente más tarde.' : 'Error al conectar con el servidor.');
-        }
-        
+      } else {
+        setMessageAlert('Por favor, rellene todos los campos.');
         setOpenErrorAlert(true);
       }
     } else {
-      alert('Por favor, rellene todos los campos.');
+      setOpenErrorAlert(true);
     }
   };
 
@@ -118,14 +140,12 @@ const Cars = () => {
   const handleDelete = async (index) => {
     const carId = cars[index].id;
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}cars/delete_car/${carId}/`,
-        {
-          headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-          },
-          withCredentials: true
-        }
-      );
+      await axios.delete(`${process.env.REACT_APP_API_URL}cars/delete_car/${carId}/`, {
+        headers: {
+          'X-CSRFToken': Cookies.get('csrftoken')
+        },
+        withCredentials: true
+      });
       const updatedCars = cars.filter((_, i) => i !== index);
       setCars(updatedCars);
     } catch (error) {
@@ -227,7 +247,7 @@ const Cars = () => {
             type="number"
             fullWidth
             variant="outlined"
-            InputProps={{ inputProps: { min: 0 } }}
+            InputProps={{ inputProps: { min: 0, max: 50 } }}
             value={newCar.capacity}
             onChange={handleChange}
           />
