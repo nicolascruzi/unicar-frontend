@@ -15,29 +15,43 @@ export default function TripsPage() {
   const [passengerTrips, setPassengerTrips] = useState([]);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewForm, setReviewForm] = useState({ qualification: '', comment: '', trip: '', user_qualified: '' });
-  const [reviewExists, setReviewExists] = useState(false);
+  const [reviewStatus, setReviewStatus] = useState({});
 
   useEffect(() => {
-    const fetchDriverTrips = async () => {
+    const fetchTrips = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/driver/`);
-        setDriverTrips(response.data);
+        const [driverResponse, passengerResponse] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_API_URL}trips/driver/`),
+          axios.get(`${process.env.REACT_APP_API_URL}trips/passenger/`)
+        ]);
+        setDriverTrips(driverResponse.data);
+        setPassengerTrips(passengerResponse.data);
+        checkReviewsStatus(driverResponse.data, passengerResponse.data);
       } catch (error) {
-        console.error('Error fetching driver trips:', error);
+        console.error('Error fetching trips:', error);
       }
     };
 
-    const fetchPassengerTrips = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}trips/passenger/`);
-        setPassengerTrips(response.data);
-      } catch (error) {
-        console.error('Error fetching passenger trips:', error);
+    const checkReviewsStatus = async (driverTrips, passengerTrips) => {
+      for (const trip of driverTrips) {
+        for (const passenger of trip.passengers) {
+          const reviewStatusResponse = await axios.get(`${process.env.REACT_APP_API_URL}reviews/check/${trip.id}/${passenger.id}/`);
+          setReviewStatus(prevStatus => ({
+            ...prevStatus,
+            [`${trip.id}_${passenger.id}`]: reviewStatusResponse.data.review_exists,
+          }));
+        }
+      }
+      for (const trip of passengerTrips) {
+        const reviewStatusResponse = await axios.get(`${process.env.REACT_APP_API_URL}reviews/check/${trip.id}/${trip.driver.id}/`);
+        setReviewStatus(prevStatus => ({
+          ...prevStatus,
+          [`${trip.id}_${trip.driver.id}`]: reviewStatusResponse.data.review_exists,
+        }));
       }
     };
 
-    fetchDriverTrips();
-    fetchPassengerTrips();
+    fetchTrips();
   }, []);
 
   const handleOpen = () => {
@@ -50,11 +64,9 @@ export default function TripsPage() {
 
   const handleReviewOpen = async (trip, user_qualified) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}reviews/check/${trip}/${user_qualified}/${Cookies.get('user_id')}/`);
-      setReviewExists(response.data.review_exists);
-
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}reviews/check/${trip}/${user_qualified}/`);
       if (!response.data.review_exists) {
-        setReviewForm({ ...reviewForm, trip, user_qualified });
+        setReviewForm({ qualification: '', comment: '', trip, user_qualified });
         setReviewOpen(true);
       } else {
         alert('Ya has calificado a este usuario para este viaje.');
@@ -80,6 +92,10 @@ export default function TripsPage() {
         },
         withCredentials: true
       });
+      setReviewStatus(prevStatus => ({
+        ...prevStatus,
+        [`${reviewForm.trip}_${reviewForm.user_qualified}`]: true,
+      }));
       setReviewOpen(false);
     } catch (error) {
       console.error('Error submitting review:', error);
@@ -110,7 +126,12 @@ export default function TripsPage() {
                 Viaje de {trip.driver.name}
               </Typography>
               {!isDriver && (
-                <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)} disabled={reviewExists}>
+                <Button 
+                  variant="outlined" 
+                  fullWidth 
+                  onClick={() => handleReviewOpen(trip.id, trip.driver.id)}
+                  disabled={reviewStatus[`${trip.id}_${trip.driver.id}`]}
+                >
                   Calificar Conductor
                 </Button>
               )}
@@ -154,7 +175,13 @@ export default function TripsPage() {
                     <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
                     <Typography variant="body2" align="center">{passenger.surname}</Typography>
                     {isDriver && (
-                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)} disabled={reviewExists}>Calificar Pasajero</Button>
+                      <Button 
+                        variant="outlined" 
+                        onClick={() => handleReviewOpen(trip.id, passenger.id)}
+                        disabled={reviewStatus[`${trip.id}_${passenger.id}`]}
+                      >
+                        Calificar Pasajero
+                      </Button>
                     )}
                   </Box>
                 ))}

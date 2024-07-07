@@ -86,7 +86,6 @@ const Requests = () => {
   const [requestDialogOpen, setRequestDialogOpen] = useState(false);
   const [incomingAsks, setIncomingAsks] = useState([]);
   const [outgoingAsks, setOutgoingAsks] = useState([]);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchRequests = async () => {
