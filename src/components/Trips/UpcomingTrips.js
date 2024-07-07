@@ -13,9 +13,6 @@ export default function UpcomingTrips() {
   const [tabIndex, setTabIndex] = useState(0);
   const [driverTrips, setDriverTrips] = useState([]);
   const [passengerTrips, setPassengerTrips] = useState([]);
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [reviewForm, setReviewForm] = useState({ qualification: '', comment: '', trip: '', user_qualified: '' });
-  const [reviewExists, setReviewExists] = useState(false);
 
   useEffect(() => {
 
@@ -93,42 +90,8 @@ export default function UpcomingTrips() {
     setOpen(false);
   };
 
-  const handleReviewOpen = async (trip, user_qualified) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}reviews/check/${trip}/${user_qualified}/${Cookies.get('user_id')}/`);
-      setReviewExists(response.data.review_exists);
-
-      if (!response.data.review_exists) {
-        setReviewForm({ ...reviewForm, trip, user_qualified });
-        setReviewOpen(true);
-      } else {
-        alert('Ya has calificado a este usuario para este viaje.');
-      }
-    } catch (error) {
-      console.error('Error checking review existence:', error);
-    }
-  };
-
-  const handleReviewClose = () => {
-    setReviewOpen(false);
-  };
-
   const handleSubmit = (formValues) => {
     console.log('Viaje publicado:', formValues);
-  };
-
-  const handleReviewSubmit = async () => {
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}reviews/create/`, reviewForm, {
-        headers: {
-          'X-CSRFToken': Cookies.get('csrftoken')
-        },
-        withCredentials: true
-      });
-      setReviewOpen(false);
-    } catch (error) {
-      console.error('Error submitting review:', error);
-    }
   };
 
   const handleChangeTab = (event, newValue) => {
@@ -194,9 +157,6 @@ export default function UpcomingTrips() {
                     </Avatar>
                     <Typography variant="body2" align="center" sx={{ fontWeight: 'bold' }}>{passenger.name}</Typography>
                     <Typography variant="body2" align="center">{passenger.surname}</Typography>
-                    {isDriver && (
-                      <Button variant="outlined" onClick={() => handleReviewOpen(trip.id, passenger.id)} disabled={reviewExists}>Calificar</Button>
-                    )}
                   </Box>
                 ))}
               </Box>
@@ -229,11 +189,6 @@ export default function UpcomingTrips() {
                 )}
                 
               </Box>
-              {!isDriver && (
-                    <Button variant="outlined" fullWidth onClick={() => handleReviewOpen(trip.id, trip.driver.id)} disabled={reviewExists}>
-                    Calificar Conductor
-                    </Button>
-                )}
               {isDriver && trip.in_progress && (
                 <Button
                     variant="contained"
@@ -283,36 +238,6 @@ export default function UpcomingTrips() {
       </Fab>
 
       <NewTrip open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
-
-      <Dialog open={reviewOpen} onClose={handleReviewClose}>
-        <DialogTitle>Crear Reseña</DialogTitle>
-        <DialogContent>
-          <Rating
-            name="qualification"
-            value={Number(reviewForm.qualification)}
-            onChange={(event, newValue) => setReviewForm({ ...reviewForm, qualification: newValue })}
-          />
-          <TextField
-            margin="dense"
-            id="comment"
-            label="Comentario"
-            type="text"
-            fullWidth
-            multiline
-            rows={4}
-            value={reviewForm.comment}
-            onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleReviewClose} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleReviewSubmit} color="primary">
-            Enviar
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }
