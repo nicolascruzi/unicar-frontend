@@ -114,9 +114,6 @@ export default function TripsPage() {
         const seatsAvailable = trip.capacity - trip.passengers.length;
         const startDate = trip.start_date ? dayjs(trip.start_date).format('DD/MM/YYYY HH:mm') : null;
         const endDate = trip.end_date ? dayjs(trip.end_date).format('DD/MM/YYYY HH:mm') : null;
-        const timeToDeparture = startDate ? calculateTimeToDeparture(trip.start_date) : null;
-        const timeToArrival = endDate ? calculateTimeToDeparture(trip.end_date) : null;
-        const showIcon = timeToDeparture || timeToArrival;
 
         return (
           <Paper key={index} sx={{ p: 3, flex: '1 1 calc(50% - 16px)', boxShadow: 3, display: 'flex', minWidth: '300px', marginBottom: '16px' }}>
@@ -188,13 +185,11 @@ export default function TripsPage() {
                   </Box>
                 ))}
               </Box> 
-              {showIcon && (
-                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', color: 'green' }} gutterBottom>      
-                    <Typography variant="body1" gutterBottom>
-                     ¡Viaje completado!
-                    </Typography>
-                </Typography>
-              )}
+              <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', color: 'green' }} gutterBottom>      
+                  <Typography variant="body1" gutterBottom>
+                    ¡Viaje completado!
+                  </Typography>
+              </Typography>
             </Box>
           </Paper>
         );
