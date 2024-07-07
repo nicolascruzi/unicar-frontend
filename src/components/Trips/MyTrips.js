@@ -188,6 +188,13 @@ export default function TripsPage() {
                   </Box>
                 ))}
               </Box> 
+              {showIcon && (
+                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', color: 'green' }} gutterBottom>      
+                    <Typography variant="body1" gutterBottom>
+                     ¡Viaje completado!
+                    </Typography>
+                </Typography>
+              )}
             </Box>
           </Paper>
         );
@@ -198,7 +205,7 @@ export default function TripsPage() {
   return (
     <Box sx={{ p: 8 }}>
       <Typography variant="h4" gutterBottom>
-        Historial de Viajes
+        Historial de Viajes Completados
       </Typography>
       <Divider sx={{ marginBottom: 5 }}></Divider>
 
