@@ -175,6 +175,7 @@ const Requests = () => {
                   <TableCell>Calificación</TableCell>
                   <TableCell>Género</TableCell>
                   <TableCell>Universidad</TableCell>
+                  <TableCell>Fecha</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
@@ -183,9 +184,10 @@ const Requests = () => {
                   <TableRow key={request.id}>
                     <TableCell>{request.nombre}</TableCell>
                     <TableCell>{request.ubicacionRecogida}</TableCell>
-                    <TableCell>{request.calificacion ? request.calificacion : 'N/A'}</TableCell>
+                    <TableCell>{request.calificacion ? (request.calificacion + "/5") : ('N/A')}</TableCell>
                     <TableCell>{request.genero}</TableCell>
                     <TableCell>{request.universidad}</TableCell>
+                    <TableCell>{request.fechaSalida ? request.fechaSalida.split('T')[0] : request.fechaLlegada.split('T')[0]}</TableCell>
                     <TableCell>
                       { request.status === 'Pendiente' && 
                       <IconButton onClick={() => handleOpenRequestDetails(request, setSelectedRequest, setRequestDialogOpen)} size="small" data-testid={`resolver-button-${request.id}`}>
@@ -216,6 +218,7 @@ const Requests = () => {
                   <TableCell>Destinatario</TableCell>
                   <TableCell>Auto</TableCell>
                   <TableCell>Lugar de Salida</TableCell>
+                  <TableCell>Fecha</TableCell>
                   <TableCell>Estado</TableCell>
                 </TableRow>
               </TableHead>
@@ -225,6 +228,7 @@ const Requests = () => {
                     <TableCell>{request.destinatario}</TableCell>
                     <TableCell>{request.auto}</TableCell>
                     <TableCell>{request.lugarSalida}</TableCell>
+                    <TableCell>{request.fechaSalida ? request.fechaSalida.split('T')[0] : request.fechaLlegada.split('T')[0]}</TableCell>
                     {request.estado === 'approved' &&
                       <TableCell>Aprobada</TableCell>
                     } {request.estado === 'denied' &&
