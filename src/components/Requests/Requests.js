@@ -24,6 +24,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { handleTabChange, handleOpenRequestDetails, handleCloseRequestDetails,
    handleApproveRequest, handleRejectRequest } from '../../utils/utilsRequests';
+import dayjs from 'dayjs';
 
 // Datos de ejemplo
 // const incomingRequests = [
@@ -176,6 +177,7 @@ const Requests = () => {
                   <TableCell>Género</TableCell>
                   <TableCell>Universidad</TableCell>
                   <TableCell>Fecha</TableCell>
+                  <TableCell>Hora</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
@@ -188,6 +190,7 @@ const Requests = () => {
                     <TableCell>{request.genero}</TableCell>
                     <TableCell>{request.universidad}</TableCell>
                     <TableCell>{request.fechaSalida ? request.fechaSalida.split('T')[0] : request.fechaLlegada.split('T')[0]}</TableCell>
+                    <TableCell>{request.fechaSalida ? ("Salida: " + dayjs(request.fechaSalida).format('HH:mm')) : ("Llegada: " + dayjs(request.fechaLlegada).format('HH:mm'))}</TableCell>
                     <TableCell>
                       { request.status === 'Pendiente' && 
                       <IconButton onClick={() => handleOpenRequestDetails(request, setSelectedRequest, setRequestDialogOpen)} size="small" data-testid={`resolver-button-${request.id}`}>
@@ -219,6 +222,7 @@ const Requests = () => {
                   <TableCell>Auto</TableCell>
                   <TableCell>Lugar de Salida</TableCell>
                   <TableCell>Fecha</TableCell>
+                  <TableCell>Hora</TableCell>
                   <TableCell>Estado</TableCell>
                 </TableRow>
               </TableHead>
@@ -229,6 +233,7 @@ const Requests = () => {
                     <TableCell>{request.auto}</TableCell>
                     <TableCell>{request.lugarSalida}</TableCell>
                     <TableCell>{request.fechaSalida ? request.fechaSalida.split('T')[0] : request.fechaLlegada.split('T')[0]}</TableCell>
+                    <TableCell>{request.fechaSalida ? ("Salida: " + dayjs(request.fechaSalida).format('HH:mm')) : ("Llegada: " + dayjs(request.fechaLlegada).format('HH:mm'))}</TableCell>
                     {request.estado === 'approved' &&
                       <TableCell>Aprobada</TableCell>
                     } {request.estado === 'denied' &&
